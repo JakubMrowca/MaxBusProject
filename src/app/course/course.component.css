@@ -1,0 +1,57 @@
+.mat-expansion-indicator::after{
+    display: none!important;
+}
+.mat-expansion-panel{
+    padding-left: 4px!important;
+    padding-right: 4px!important;
+}
+.mat-expansion-panel-header{
+    padding-left: 2px!important;
+    padding-right: 2px!important;
+}
+.mat-expansion-panel-header span {
+    display: none!important;    
+}
+
+:host /deep/ .mat-expansion-panel-header-description{
+    flex-grow: 1!important;
+}
+
+.mat-grid-tile{
+}
+
+.gridHeader{
+    background-color:#5255e0;
+}
+:host /deep/ .mat-expansion-panel-body{
+    padding-left: 0px!important;
+    padding-right: 0px!important;
+}
+
+@keyframes MyAnimation {
+    0% {
+      margin-left: 15px;
+      opacity: 0;
+    }
+    100% {
+        opacity: 1;
+        margin-left: 0px;
+    } 
+  }
+  .my-animation {
+    animation: MyAnimation 1s;
+  }
+
+  .rotate-animation{
+    transition-duration: 1s;
+    transform: rotate(180deg);
+  }
+
+  .rotate-back-animation{
+    transition-duration: 1s;
+    transform: rotate(0deg);
+  }
+
+  .first-stop{
+      border-bottom: solid 2px #5255e0;
+  }

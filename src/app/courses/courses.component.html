@@ -1,0 +1,24 @@
+<div>
+    <div style="height: 60px;width: 100%;font-size: 20px;  display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;">
+        Kursy do Limanowej
+        <i class="material-icons">
+            directions_bus
+        </i>
+    </div>
+    <app-course [isStart]="false" [allCourses]="limCourses" direction="Lim"></app-course>
+    <hr>
+    <div style="height: 60px;width: 100%;font-size: 20px;  display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;">
+        Kursy do Krakowa
+        <i class="material-icons">
+            directions_bus
+        </i>
+    </div>
+    <app-course [isStart]="false" [allCourses]="krkCourses" direction="Krk"></app-course>
+
+</div>
