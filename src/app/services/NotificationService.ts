@@ -47,6 +47,11 @@ export class NotificationService {
         }
     }
 
+    getAppVersion(): number {
+        var appVersion= this.localDb.getAppVersion();
+        return appVersion;
+    }
+
     getMessage(): Message {
         var message: Message = this.localDb.getMessage();
         return message;

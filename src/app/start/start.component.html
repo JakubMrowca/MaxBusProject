@@ -1,3 +1,4 @@
+<div class="start">
 <div style="height: 60px;width: 100%;font-size: 20px;  display: flex;
 justify-content: center;
 flex-direction: column;
@@ -8,3 +9,8 @@ Najbliższe kursy
 </i>
 </div>
 <app-course [isStart]="true" [allCourses]="startCourses"></app-course>
+</div>
+<div class="notification">
+  <span style="margin-right:10px;font-size: 20px;float:right;color: #7b1fa2">{{appVersion}}</span>
+  <span style="font-size: 20px;float:left;margin-left:10px">{{message.text}}</span>
+</div>
