@@ -29,6 +29,7 @@ export class LocationService {
 
     getLocationForLatAndLeng() {
         var that = this;
+        var options = {enableHighAccuracy:true};
         console.log("location");
         var watchId = navigator.geolocation.getCurrentPosition(data => {
             var lat = data.coords.latitude;
@@ -44,7 +45,7 @@ export class LocationService {
         }, error =>{
             that.locationEvent.currentLocation = null;
             that.locationEvent.sendEvent();
-        });
+        }, options);
     }
 
 }
