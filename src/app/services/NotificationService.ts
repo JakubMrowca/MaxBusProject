@@ -30,6 +30,7 @@ export class NotificationService {
 
                 var appVersion = that.localDb.getAppVersion();
                 if (notification.appVersion > appVersion) {
+                    notification.message.unread = true;
                     that.localDb.saveAppVersion(notification.appVersion);
                     that.localDb.saveMessage(notification.message);
                     that.localDb.saveSchoolFreeDay(notification.schoolDayFreeFrom, notification.schoolDayFreeTo);
@@ -38,6 +39,7 @@ export class NotificationService {
                     that.appVersionEvent.timetableVersion = notification.timetableVersion;
                     that.appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
                     that.appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
+                    that.appVersionEvent.message = notification.message;
                     that.appVersionEvent.sendEvent();
                 }
                 else {
@@ -45,6 +47,10 @@ export class NotificationService {
                 }
             });
         }
+    }
+
+    saveMessage(message:Message){
+        this.localDb.saveMessage(message);
     }
 
     getAppVersion(): number {

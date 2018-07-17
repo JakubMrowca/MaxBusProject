@@ -1,23 +1,23 @@
-<mat-toolbar color="primary">
-    <button style="width: 33%"  [routerLink]="['/start']" mat-button>
+<mat-toolbar class="menu-bus-item" color="primary">
+    <button [routerLink]="['/start']" mat-button>
         <i class="material-icons">
             compare_arrows
         </i>
        Start</button>
-    <button [routerLink]="['/courses']" style="width: 33%"  mat-button>
+    <button [routerLink]="['/courses']" mat-button>
         <i class="material-icons">
             directions_bus
         </i>Kursy
         </button>
-    <button [routerLink]="['/timetable']" style="width: 33%"  mat-button>
+    <button [routerLink]="['/timetable']" mat-button>
      <i class="material-icons">
             format_list_bulleted
         </i>Rozkład</button>
 
 </mat-toolbar>
-<div *ngIf="!timetableIsActual || !locationIsDetected" class="spinner-center">
+<div *ngIf="!locationIsDetected" class="spinner-center">
     <mat-spinner></mat-spinner>
 </div>
-<div *ngIf="timetableIsActual && locationIsDetected">
+<div *ngIf="locationIsDetected">
     <router-outlet></router-outlet>
 </div>

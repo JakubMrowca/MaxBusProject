@@ -1,5 +1,6 @@
 import { Observable, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Message } from '../models/Message';
 
 @Injectable()
 export class AppVersionUpdated {
@@ -8,6 +9,7 @@ export class AppVersionUpdated {
     public timetableVersion: number;
     public schoolFreeDayFrom:string;
     public schoolFreeDayTo:string;
+    public message:Message;
 
     constructor() {
     }

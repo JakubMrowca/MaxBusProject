@@ -3,7 +3,23 @@
 body{
     margin: 0!important;
     height: 100%!important;
+    font-family: 'Kalam';
 }
+@font-face {
+    font-family: 'Kalam';
+    src: URL('./assets/Kalam-Regular.ttf') format('ttf');
+  }
 html{
     height: 100%!important;
+}
+.logo{
+    position:absolute;
+    z-index: -1;
+    bottom: 0px;
+    opacity: 0.4;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 217px
 }

@@ -10,7 +10,7 @@ Najbliższe kursy
 </div>
 <app-course [isStart]="true" [allCourses]="startCourses"></app-course>
 </div>
-<div class="notification">
-  <span style="margin-right:10px;font-size: 20px;float:right;color: #7b1fa2">{{appVersion}}</span>
-  <span style="font-size: 20px;float:left;margin-left:10px">{{message.text}}</span>
+<div [ngClass]="{'notification-hidden' : hideNotification}" (click)="notificationClick()" class="notification">
+  <span [ngClass]="{'unread-message' : message.unread}" class="app-version">{{appVersion}}</span>
+  <span style="font-size: 20px;float:left;margin-top: -3px;margin-left:10px">{{message.text}}</span>
 </div>

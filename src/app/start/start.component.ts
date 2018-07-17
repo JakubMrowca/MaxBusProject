@@ -8,6 +8,7 @@ import { LocationService } from '../services/LocationService';
 import { CoursesFiltered } from '../events/CoursesFiltered';
 import { NotificationService } from '../services/NotificationService';
 import { Message } from '../models/Message';
+import { AppVersionUpdated } from '../events/AppVersionUpdated';
 
 @Component({
   selector: 'app-start',
@@ -18,15 +19,18 @@ export class StartComponent implements OnInit {
   startCourses: List<Course>;
   allCourses: List<Course>;
   subscription: Subscription;
+  subsVersion: Subscription;
   direction: string;
-  message:Message;
-  appVersion:number;
-  constructor(private appState: AppState, private notService:NotificationService, private locationEvent:LocationDetected,private courseEvent: CoursesFiltered, private locationService:LocationService) {
+  hideNotification = true;
+  unreadNotification = false;
+  message: Message;
+  appVersion: number;
+  constructor(private appState: AppState, private notService: NotificationService, private locationEvent: LocationDetected, private courseEvent: CoursesFiltered, private locationService: LocationService) {
     this.allCourses = this.appState.allCourses;
-    this.subscription = this.locationEvent.getMessage().subscribe(message =>{
+    this.subscription = this.locationEvent.getMessage().subscribe(message => {
       this.direction = this.locationService.getDirection();
       this.getCourseForDirection(true);
-      
+
     });
     this.direction = this.appState.direction == null ? "Lim" : this.appState.direction;
   }
@@ -41,14 +45,25 @@ export class StartComponent implements OnInit {
       })
       .ToList();
 
-      if(sendEvent)
-        this.courseEvent.sendEvent();
-    }
+    if (sendEvent)
+      this.courseEvent.sendEvent();
+  }
 
   ngOnInit() {
     this.getCourseForDirection(false);
     this.appVersion = this.notService.getAppVersion();
     this.message = this.notService.getMessage();
+    this.hideNotification = !this.message.unread;
+  }
+
+  notificationClick() {
+    if (this.hideNotification == false) {
+      if (this.message.unread == true) {
+        this.message.unread = false;
+        this.notService.saveMessage(this.message);
+      }
+      this.hideNotification = true;
+    } else this.hideNotification = false;
   }
 
 }

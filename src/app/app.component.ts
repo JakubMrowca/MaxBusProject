@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { List } from 'linqts';
 import { Course } from './models/Course';
 import { NotificationService } from './services/NotificationService';
-import { TraficService } from './services/TraficService';
 import { TimetableUpdateService } from './services/TimetableUpdateService';
 import { LocationService } from './services/LocationService';
 import { TimetableUpdated } from './events/TimetableUpdated';
@@ -24,7 +23,7 @@ export class AppComponent {
   subscription: Subscription;
   timetableVerSub: Subscription;
   locationSub: Subscription;
-  internetSub:Subscription;
+  internetSub: Subscription;
   limCourses: List<Course>;
   krkCourses: List<Course>;
   allCourses: List<Course>;
@@ -32,25 +31,24 @@ export class AppComponent {
   calculatingDuration = false;
   timetableIsActual = false;
   locationIsDetected = false;
-  
-  constructor(private appState:AppState, private router:Router, public notService: NotificationService, public locationEvent: LocationDetected,
+  locationState: any = "test";
+
+  constructor(private appState: AppState, private router: Router, public notService: NotificationService, public locationEvent: LocationDetected,
     public timetableService: TimetableUpdateService, public locationService: LocationService,
     private timetableEvent: TimetableUpdated, private timetableVersionEvent: TimetableVersionChanged,
-    private legendService: LegendService, private courseEvent:CoursesFiltered,private internetEvent:NoInternet) {
-    this.notService.updateNotification();
-    this.eventSubscriptionInit();
-    document.addEventListener('deviceready', () => {
-      locationService.getLocationForLatAndLeng();
-    });
+    private legendService: LegendService, private courseEvent: CoursesFiltered, private internetEvent: NoInternet) {
 
-    locationService.getLocationForLatAndLeng();
+    this.eventSubscriptionInit();
+    var that = this;
+    document.addEventListener('deviceready', () => {
+    that.notService.updateNotification();
+    });
   }
 
   eventSubscriptionInit() {
 
     this.subscription = this.timetableEvent.getMessage().subscribe(message => {
-      this.setTimetable()
-      this.timetableIsActual = true;
+      this.afterNotificationUpdate();
     });
 
     this.timetableVerSub = this.timetableVersionEvent.getMessage().subscribe(message => {
@@ -59,24 +57,38 @@ export class AppComponent {
 
     this.locationSub = this.locationEvent.getMessage().subscribe(message => {
       this.locationIsDetected = true;
-      if(message.currentLocation == null){
+      if (message.currentLocation == null) {
         this.router.navigate(["courses"]);
       }
-      else{
+      else {
         this.appState.direction = this.locationService.getDirection();
         this.router.navigate(["start"]);
       }
     });
 
-    this.internetSub = this.internetEvent.getMessage().subscribe(message =>{
-      this.setTimetable();
-      this.timetableIsActual = true;
+    this.internetSub = this.internetEvent.getMessage().subscribe(message => {
+      this.afterNotificationUpdate();
+    });
+  }
+
+  afterNotificationUpdate() {
+    this.setTimetable();
+    this.timetableIsActual = true;
+    var that = this;
+    this.locationService.locationIsEnabled().then(data => {
+      that.locationState = data;
+      if (data == true)
+        that.locationService.getLocationForLatAndLeng();
+      else {
+        that.locationIsDetected = true;
+        that.router.navigate(["courses"]);
+      }
     });
   }
 
   setTimetable() {
     this.allCourses = this.timetableService.getTimetable();
     this.appState.allCourses = this.allCourses.Where(x => this.legendService.courseIsInThisDay(x) == true).ToList();
-   
+
   }
 }

@@ -1,8 +1,8 @@
 export enum TimeEnum {
-    veryNear = 12,
-    near = 22,
+    veryNear = 8,
+    near = 25,
     far = 35,
-    old = 60
+    old = 90
 }
 export class TimeEnumHelper {
 

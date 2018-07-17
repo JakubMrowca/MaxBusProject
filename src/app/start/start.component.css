@@ -7,4 +7,32 @@
     padding-top: 15px;
     padding-bottom: 5px;
     color: white;
+    right: 0px;
+    transition-duration: 0.3s
 }
+
+.notification-hidden{
+    width: 50px!important;
+    border-radius: 90%;
+}
+
+.app-version{
+    margin-right:15px;font-size: 20px;padding-bottom: 10px;float:right;margin-top: -3px;color: #7b1fa2;
+}
+
+@keyframes MyColorAnimation {
+    0% {
+
+      color: #e30202
+    }
+    50% {
+color: #fea7a7
+    }
+    100%{
+        color: #e30202
+    }
+  }
+
+  .unread-message {
+    animation: MyColorAnimation 1s infinite;
+  }

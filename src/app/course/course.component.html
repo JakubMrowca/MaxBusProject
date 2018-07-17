@@ -16,7 +16,7 @@
           </div>
         </mat-panel-description>
         <mat-panel-description>
-          <div style="margin: 0 auto">
+          <div class="colored-time" style="margin: 0 auto">
             {{calculateTime(course.firstStop)}}
           </div>
         </mat-panel-description>
@@ -38,9 +38,10 @@
   </div>
 </mat-accordion>
 
-<div style="width: 100%;text-align: center">
+<div class="more-less-text">
   <a (click)="moreCourse()">
-    <i [ngClass]="{'rotate-animation' : showLessPlus, 'rotate-back-animation' : !showLessPlus}" class="material-icons">
+    <span>{{showLessPlus != true ? 'więcej' : 'mniej'}} </span>
+    <i style="margin-left: 2px" [ngClass]="{'rotate-animation' : showLessPlus, 'rotate-back-animation' : !showLessPlus}" class="material-icons">
       keyboard_arrow_down
     </i>
   </a>

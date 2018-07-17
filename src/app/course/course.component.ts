@@ -20,13 +20,14 @@ export class CourseComponent implements OnInit {
   @Input() allCourses:  List<Course>;
 
   timetableIsActual = true;
-  timePlus: TimeEnum = TimeEnum.veryNear;
+  timePlus: TimeEnum = TimeEnum.near;
   timeMinus: TimeEnum = TimeEnum.veryNear;
   subscription: Subscription;
   nearCourses: Array<Course>;
   calculatingDuration = false;
   showLessPlus = false;
   showLessMinus = false;
+  constTimeEnum = TimeEnum.near;
 
   constructor(private traffic: TraficService, public locationService: LocationService, private courseEvent: CoursesFiltered) {
     this.subscription = this.courseEvent.getMessage().subscribe(message => {
@@ -41,7 +42,7 @@ export class CourseComponent implements OnInit {
 
   moreCourse() {
     var nearCoursesCount = this.nearCourses.length;
-    var courses
+    var courses;
     if (this.showLessPlus == false) {
       if(this.timePlus == TimeEnum.old){
         return;
@@ -55,7 +56,7 @@ export class CourseComponent implements OnInit {
     }
     else {
       this.showLessPlus = false;
-      this.timePlus = TimeEnum.veryNear;
+      this.timePlus = TimeEnum.near;
       courses = this.getNearCourse(this.allCourses, this.timePlus, this.timeMinus);
     }
     this.nearCourses = courses

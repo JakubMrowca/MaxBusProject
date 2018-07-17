@@ -10,3 +10,7 @@ height: 100%!important;
 html{
     height: 100%!important;
 }
+.menu-bus-item button{
+    width: 33%;
+    font-family: 'Kalam'!important;
+}

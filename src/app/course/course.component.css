@@ -28,14 +28,18 @@
     padding-right: 0px!important;
 }
 
+.colored-time{
+    color: #5255e0!important;
+    font-weight: bold;
+}
+
 @keyframes MyAnimation {
     0% {
-      margin-left: 15px;
+
       opacity: 0;
     }
     100% {
         opacity: 1;
-        margin-left: 0px;
     } 
   }
   .my-animation {
@@ -54,4 +58,14 @@
 
   .first-stop{
       border-bottom: solid 2px #5255e0;
+  }
+
+  .more-less-text{
+      color: #5255e0;
+      width: 100%;
+      text-align: right
+  }
+  .more-less-text span{
+    position: relative;
+    top: -7px;
   }
