@@ -50,6 +50,7 @@ export class StartComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log("start");
     this.getCourseForDirection(false);
     this.appVersion = this.notService.getAppVersion();
     this.message = this.notService.getMessage();

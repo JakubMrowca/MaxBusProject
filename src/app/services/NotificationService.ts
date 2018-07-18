@@ -19,7 +19,9 @@ export class NotificationService {
 
     updateNotification() {
         if (!navigator.onLine) {
+            console.log("notOnline");
             this.internetEvent.sendEvent();
+            
         }
         else {
             var that = this;
@@ -40,9 +42,11 @@ export class NotificationService {
                     that.appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
                     that.appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
                     that.appVersionEvent.message = notification.message;
+                    console.log("appVersion change");
                     that.appVersionEvent.sendEvent();
                 }
                 else {
+                    console.log("Not app version changes")
                     that.internetEvent.sendEvent();
                 }
             });

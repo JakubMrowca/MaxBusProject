@@ -48,6 +48,7 @@ export class TimetableUpdateService {
             var timetable = TimetableBuilderHelper.buildTimetableFromJson(data);
             that.localDb.saveTimetable(timetable.ToArray());
             that.timetableEvent.timetable = timetable;
+            console.log("updateTimetable");
             that.timetableEvent.sendEvent();
         });
     }

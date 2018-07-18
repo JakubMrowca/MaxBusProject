@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { List } from 'linqts';
 import { Course } from './models/Course';
@@ -13,6 +13,7 @@ import { CoursesFiltered } from './events/CoursesFiltered';
 import { Router } from '@angular/router';
 import { AppState } from './services/AppState';
 import { NoInternet } from './events/NoInternet';
+import { AppVersionUpdated } from './events/AppVersionUpdated';
 
 @Component({
   selector: 'app-root',
@@ -24,6 +25,7 @@ export class AppComponent {
   timetableVerSub: Subscription;
   locationSub: Subscription;
   internetSub: Subscription;
+  appVersionSub: Subscription;
   limCourses: List<Course>;
   krkCourses: List<Course>;
   allCourses: List<Course>;
@@ -33,40 +35,50 @@ export class AppComponent {
   locationIsDetected = false;
   locationState: any = "test";
 
-  constructor(private appState: AppState, private router: Router, public notService: NotificationService, public locationEvent: LocationDetected,
+  constructor(private appState: AppState, public zone: NgZone, private router: Router, public notService: NotificationService, public locationEvent: LocationDetected,
     public timetableService: TimetableUpdateService, public locationService: LocationService,
     private timetableEvent: TimetableUpdated, private timetableVersionEvent: TimetableVersionChanged,
-    private legendService: LegendService, private courseEvent: CoursesFiltered, private internetEvent: NoInternet) {
+    private legendService: LegendService, private appVersionEvent: AppVersionUpdated, private internetEvent: NoInternet) {
 
     this.eventSubscriptionInit();
     var that = this;
     document.addEventListener('deviceready', () => {
-    that.notService.updateNotification();
+      console.log("deviceIsReady");
+      that.notService.updateNotification();
     });
   }
 
   eventSubscriptionInit() {
 
     this.subscription = this.timetableEvent.getMessage().subscribe(message => {
+      console.log("timetable update catch");
       this.afterNotificationUpdate();
     });
 
+    // this.appVersionSub = this.appVersionEvent.getMessage().subscribe(message =>{
+    //   this.afterNotificationUpdate();
+    // });
     this.timetableVerSub = this.timetableVersionEvent.getMessage().subscribe(message => {
       this.timetableIsActual = false;
     });
 
     this.locationSub = this.locationEvent.getMessage().subscribe(message => {
-      this.locationIsDetected = true;
-      if (message.currentLocation == null) {
-        this.router.navigate(["courses"]);
-      }
-      else {
-        this.appState.direction = this.locationService.getDirection();
-        this.router.navigate(["start"]);
-      }
+      console.log("locationIsDetected so navigate to:");
+      this.zone.run(() =>{
+        this.locationIsDetected = true;
+        if (message.currentLocation == null) {
+          this.router.navigate(["courses"]);
+        }
+        else {
+          this.appState.direction = this.locationService.getDirection();
+          this.router.navigate(["start"]);
+        }
+      })
+     
     });
 
     this.internetSub = this.internetEvent.getMessage().subscribe(message => {
+      console.log("NoInternet catch or app no change");
       this.afterNotificationUpdate();
     });
   }
@@ -76,13 +88,16 @@ export class AppComponent {
     this.timetableIsActual = true;
     var that = this;
     this.locationService.locationIsEnabled().then(data => {
-      that.locationState = data;
-      if (data == true)
-        that.locationService.getLocationForLatAndLeng();
-      else {
-        that.locationIsDetected = true;
-        that.router.navigate(["courses"]);
-      }
+      this.zone.run(() => {
+        if (data == true)
+          this.locationService.getLocationForLatAndLeng();
+        else {
+
+          this.locationIsDetected = true;
+          console.log("location is disable")
+          this.router.navigate(["courses"]);
+        }
+      })
     });
   }
 

@@ -46,6 +46,7 @@ export class LocationService {
         
         console.log("location");
         var watchId = navigator.geolocation.getCurrentPosition(data => {
+            console.log("user allow location");
             var lat = data.coords.latitude;
             var leng = data.coords.longitude;
             for (let i = 0; i < latitudeRange.length; i++) {
@@ -57,6 +58,7 @@ export class LocationService {
                 }
             }
         }, error =>{
+            console.log("user not allow location");
             that.locationEvent.currentLocation = null;
             that.locationEvent.sendEvent();
         }, options);
