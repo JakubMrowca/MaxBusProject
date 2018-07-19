@@ -7,7 +7,7 @@ import { EventService } from './EventServices';
 import { AppVersionUpdated } from '../events/AppVersionUpdated';
 import { TagPlaceholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { NoInternet } from '../events/NoInternet';
-
+declare let navigator: any;
 @Injectable()
 export class NotificationService {
 
@@ -18,10 +18,11 @@ export class NotificationService {
     }
 
     updateNotification() {
-        if (!navigator.onLine) {
+        var connection = navigator.connection.type;
+        console.log(connection);
+        if(connection == "none"){
             console.log("notOnline");
             this.internetEvent.sendEvent();
-            
         }
         else {
             var that = this;

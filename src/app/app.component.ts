@@ -42,22 +42,26 @@ export class AppComponent {
 
     this.eventSubscriptionInit();
     var that = this;
-    document.addEventListener('deviceready', () => {
+    // document.addEventListener('deviceready', () => {
       console.log("deviceIsReady");
       that.notService.updateNotification();
-    });
+    // });
+
+    document.addEventListener("online", this.connected, false);
   }
 
   eventSubscriptionInit() {
 
     this.subscription = this.timetableEvent.getMessage().subscribe(message => {
       console.log("timetable update catch");
-      this.afterNotificationUpdate();
+      this.setTimetable();
+      this.timetableIsActual = true;
     });
 
-    // this.appVersionSub = this.appVersionEvent.getMessage().subscribe(message =>{
-    //   this.afterNotificationUpdate();
-    // });
+    this.appVersionSub = this.appVersionEvent.getMessage().subscribe(message =>{
+      this.afterNotificationUpdate();
+     });
+
     this.timetableVerSub = this.timetableVersionEvent.getMessage().subscribe(message => {
       this.timetableIsActual = false;
     });
@@ -66,6 +70,7 @@ export class AppComponent {
       console.log("locationIsDetected so navigate to:");
       this.zone.run(() =>{
         this.locationIsDetected = true;
+        this.appState.currentLocation = message.currentLocation;
         if (message.currentLocation == null) {
           this.router.navigate(["courses"]);
         }
@@ -83,6 +88,13 @@ export class AppComponent {
     });
   }
 
+  connected(){
+    this.zone.run(() =>{
+      // this.timetableIsActual = false;
+      console.log("Connection return");
+    });
+  }
+
   afterNotificationUpdate() {
     this.setTimetable();
     this.timetableIsActual = true;
@@ -92,7 +104,6 @@ export class AppComponent {
         if (data == true)
           this.locationService.getLocationForLatAndLeng();
         else {
-
           this.locationIsDetected = true;
           console.log("location is disable")
           this.router.navigate(["courses"]);

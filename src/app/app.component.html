@@ -15,9 +15,9 @@
         </i>Rozkład</button>
 
 </mat-toolbar>
-<div *ngIf="!locationIsDetected" class="spinner-center">
+<div *ngIf="!locationIsDetected || !timetableIsActual" class="spinner-center">
     <mat-spinner></mat-spinner>
 </div>
-<div *ngIf="locationIsDetected">
+<div *ngIf="locationIsDetected && timetableIsActual">
     <router-outlet></router-outlet>
 </div>
