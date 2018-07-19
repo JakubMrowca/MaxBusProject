@@ -7,7 +7,7 @@ import { EventService } from './EventServices';
 import { AppVersionUpdated } from '../events/AppVersionUpdated';
 import { TagPlaceholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { NoInternet } from '../events/NoInternet';
-
+declare let navigator: any;
 @Injectable()
 export class NotificationService {
 
@@ -18,7 +18,10 @@ export class NotificationService {
     }
 
     updateNotification() {
-        if (!navigator.onLine) {
+        var connection = navigator.connection.type;
+        console.log(connection);
+        if(connection == "none"){
+            console.log("notOnline");
             this.internetEvent.sendEvent();
         }
         else {
@@ -30,6 +33,7 @@ export class NotificationService {
 
                 var appVersion = that.localDb.getAppVersion();
                 if (notification.appVersion > appVersion) {
+                    notification.message.unread = true;
                     that.localDb.saveAppVersion(notification.appVersion);
                     that.localDb.saveMessage(notification.message);
                     that.localDb.saveSchoolFreeDay(notification.schoolDayFreeFrom, notification.schoolDayFreeTo);
@@ -38,13 +42,25 @@ export class NotificationService {
                     that.appVersionEvent.timetableVersion = notification.timetableVersion;
                     that.appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
                     that.appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
+                    that.appVersionEvent.message = notification.message;
+                    console.log("appVersion change");
                     that.appVersionEvent.sendEvent();
                 }
                 else {
+                    console.log("Not app version changes")
                     that.internetEvent.sendEvent();
                 }
             });
         }
+    }
+
+    saveMessage(message:Message){
+        this.localDb.saveMessage(message);
+    }
+
+    getAppVersion(): number {
+        var appVersion= this.localDb.getAppVersion();
+        return appVersion;
     }
 
     getMessage(): Message {

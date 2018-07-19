@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { LocationDetected } from "../events/LocationDetected";
-
+declare let cordova: any;
 @Injectable()
 export class LocationService {
 
@@ -27,10 +27,26 @@ export class LocationService {
         }
     }
 
+    locationIsEnabled(){
+        return new Promise((resolve,reject)=>{
+            cordova.plugins.diagnostic.isGpsLocationEnabled(function (enabled) {
+                resolve(enabled)
+                console.log("notError");
+            }, function (error) {
+                console.log("error");
+                console.log(error);
+                resolve("błąd")
+            });
+        })
+    }
+
     getLocationForLatAndLeng() {
         var that = this;
+        var options = {enableHighAccuracy:true};  
+        
         console.log("location");
         var watchId = navigator.geolocation.getCurrentPosition(data => {
+            console.log("user allow location");
             var lat = data.coords.latitude;
             var leng = data.coords.longitude;
             for (let i = 0; i < latitudeRange.length; i++) {
@@ -42,9 +58,10 @@ export class LocationService {
                 }
             }
         }, error =>{
+            console.log("user not allow location");
             that.locationEvent.currentLocation = null;
             that.locationEvent.sendEvent();
-        });
+        }, options);
     }
 
 }

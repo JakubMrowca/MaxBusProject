@@ -16,10 +16,12 @@ export class CoursesComponent implements OnInit {
   constructor(private courseEvent:CoursesFiltered, private appState:AppState) { 
     this.allCourses = this.appState.allCourses;
    
-    console.log("first");
+
   }
 
   ngOnInit() {
+    console.log("courses");
+  
     this.getCourseForDirection();
   }
 

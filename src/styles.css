@@ -1,5 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/purple-green.css";
+@font-face {
+    font-family: 'Kalam';
+    src: URL('fonts/Kalam-Regular.ttf') format('ttf');
+  }
 body{
     margin: 0!important;
+    height: 100%!important;
+    font-family: 'Kalam';
+}
+
+html{
+    height: 100%!important;
+}
+.logo{
+    position:fixed;
+    z-index: -10;
+    bottom: 0px;
+    opacity: 0.4;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 217px
 }

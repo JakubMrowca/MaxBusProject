@@ -77,7 +77,8 @@ export class LegendService {
     }
 
     isSunnday(dayOfWeek: number) {
-        if (dayOfWeek == 7)
+        console.log(dayOfWeek);
+        if (dayOfWeek == 0)
             return true;
         return false
     }
