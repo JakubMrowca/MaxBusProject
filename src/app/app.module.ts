@@ -95,6 +95,7 @@ const path: Routes = [
     MatBottomSheetModule,
     MatButtonModule,
     MatButtonToggleModule,
+    FormsModule,
     RouterModule,
     MatCardModule,
     MatCheckboxModule,

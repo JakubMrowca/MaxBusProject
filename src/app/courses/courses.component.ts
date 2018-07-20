@@ -15,8 +15,6 @@ export class CoursesComponent implements OnInit {
   krkCourses: List<Course>;
   constructor(private courseEvent:CoursesFiltered, private appState:AppState) { 
     this.allCourses = this.appState.allCourses;
-   
-
   }
 
   ngOnInit() {

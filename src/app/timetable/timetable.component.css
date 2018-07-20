@@ -1,0 +1,55 @@
+:host /deep/ .mat-tab-label{
+    width: 50%!important;
+    height: 30px!important;
+    font-family: "Kalam"!important;
+    color: #7b1fa2!important;
+}
+
+.gridHeader{
+    background-color:#5255e0;
+}
+:host /deep/ .mat-expansion-indicator{
+display: none!important;
+}
+
+.timetable-course{
+    width: 100%;
+    padding-top: 6px!important;
+    padding-bottom: 6px;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    background-color:#424242;
+    color: #eee;
+}
+
+.odd{
+    background-color: #5e525f!important;
+}
+
+.filter-bar{
+    position: fixed;
+    height: 40px;
+    padding-top: 4px;
+    padding-bottom: 5px;
+    color: white;
+    bottom: 0px;
+    right: 0px;
+    z-index: 1000;
+    width: 100%;
+    background-color: #5255e0;
+    transition-duration: 0.3s;
+    font-size: 12px!important
+}
+.filter-bar-hidden{
+    bottom: 2px;
+    right: 4px;
+    width: 50px;
+    border-radius: 90%;
+}
+
+.filter-options{
+    margin-right:13px;
+    font-size: 20px;
+    padding-bottom: 10px;
+    float:right;
+    margin-top: 8px;
+}

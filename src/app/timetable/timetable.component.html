@@ -1,3 +1,50 @@
-<p>
- Timetable started to works
-</p>
+<div>
+  <mat-tab-group (selectedTabChange)="onTabClick($event)" style="padding-bottom: 40px">
+    <mat-tab label="Do Krakowa" style="margin-bottom: 10px;">
+      <div (click)="showStops(course)" class="timetable-course" *ngFor="let course of limCourses;let isOdd=odd" [class.odd]="isOdd" style="margin-bottom: 10px">
+        <mat-grid-list cols="3" rowHeight="20:3">
+          <mat-grid-tile>{{course.direction}}</mat-grid-tile>
+          <mat-grid-tile>{{course.firstStop.timeString}}</mat-grid-tile>
+          <mat-grid-tile>{{course.legends}}</mat-grid-tile>
+        </mat-grid-list>
+      </div>
+    </mat-tab>
+    <mat-tab label="Do Limanowej">
+        <div (click)="showStops(courseKrk)" class="timetable-course" *ngFor="let courseKrk of krkCourses;let isOddKrk=odd" [class.odd]="isOddKrk" style="margin-bottom: 10px">
+            <mat-grid-list cols="3" rowHeight="20:3">
+              <mat-grid-tile>{{courseKrk.direction}}</mat-grid-tile>
+              <mat-grid-tile>{{courseKrk.firstStop.timeString}}</mat-grid-tile>
+              <mat-grid-tile>{{courseKrk.legends}}</mat-grid-tile>
+            </mat-grid-list>
+          </div>
+    </mat-tab>
+  </mat-tab-group>
+  <div [ngClass]="{'filter-bar-hidden' : hideFilterBar}" class="filter-bar">
+    <div *ngIf="!hideFilterBar">
+      <mat-grid-list cols="4" rowHeight="10:3">
+        <mat-grid-tile>
+          <mat-checkbox [(ngModel)]="zegocinaCourse" (change)="filterCourses()" color='primary'></mat-checkbox>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-checkbox [(ngModel)]="szykCourse" (change)="filterCourses()" color='primary'></mat-checkbox>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-checkbox [(ngModel)]="rybieCourse" (change)="filterCourses()" color='primary'></mat-checkbox>
+        </mat-grid-tile>
+        <mat-grid-tile (click)="filterBarClick()" style="margin-top: 7px!important">
+          <i class="material-icons">
+            arrow_forward
+          </i>
+        </mat-grid-tile>
+        <mat-grid-tile>Żegocina</mat-grid-tile>
+        <mat-grid-tile>Szyk</mat-grid-tile>
+        <mat-grid-tile>Rybie</mat-grid-tile>
+      </mat-grid-list>
+    </div>
+    <div (click)="filterBarClick()" class="filter-options" *ngIf="hideFilterBar">
+      <i class="material-icons">
+        filter_list
+      </i>
+    </div>
+  </div>
+</div>

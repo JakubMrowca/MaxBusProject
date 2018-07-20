@@ -14,6 +14,8 @@
 .notification-hidden{
     width: 50px!important;
     border-radius: 90%;
+    bottom: 2px;
+    right: 4px;
 }
 
 .app-version{

@@ -6,6 +6,7 @@ import { Course } from "../models/Course";
 export class AppState{
 
     allCourses:List<Course>
+    timetable:List<Course>
     direction:string;
     currentLocation:string;
 
