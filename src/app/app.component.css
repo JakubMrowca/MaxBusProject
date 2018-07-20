@@ -6,6 +6,7 @@
 }
 body{
 height: 100%!important;
+margin-top: 55px!important;
 }
 html{
     height: 100%!important;
@@ -13,4 +14,9 @@ html{
 .menu-bus-item button{
     width: 33%;
     font-family: 'Kalam'!important;
+}
+.menu-bus-item{
+    position: fixed;
+    top: 0px;
+    z-index: 1300;
 }

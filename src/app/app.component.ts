@@ -42,10 +42,10 @@ export class AppComponent {
 
     this.eventSubscriptionInit();
     var that = this;
-    // document.addEventListener('deviceready', () => {
+    document.addEventListener('deviceready', () => {
       console.log("deviceIsReady");
       that.notService.updateNotification();
-    // });
+    });
 
     document.addEventListener("online", this.connected, false);
   }
@@ -114,6 +114,7 @@ export class AppComponent {
 
   setTimetable() {
     this.allCourses = this.timetableService.getTimetable();
+    this.appState.timetable = this.allCourses;
     this.appState.allCourses = this.allCourses.Where(x => this.legendService.courseIsInThisDay(x) == true).ToList();
 
   }

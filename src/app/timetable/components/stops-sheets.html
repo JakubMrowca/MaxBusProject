@@ -1,0 +1,19 @@
+<mat-nav-list>
+        <mat-grid-list cols="3" rowHeight="15:3">
+                <mat-grid-tile>{{course.direction}}</mat-grid-tile>
+                <mat-grid-tile>{{course.firstStop.timeString}}</mat-grid-tile>
+                <mat-grid-tile>{{course.stops[course.stops.length-1].timeString}}</mat-grid-tile>
+        </mat-grid-list>
+        <br>
+        <mat-grid-list cols="2" rowHeight="15:3">
+                <mat-grid-tile style="background-color:#5255e0">Przystanek</mat-grid-tile>
+                <mat-grid-tile style="background-color:#5255e0">Czas</mat-grid-tile>
+                <div *ngFor="let stop of course.stops">
+                  <mat-grid-tile>{{stop.city}}</mat-grid-tile>
+                  <mat-grid-tile>{{stop.timeString}}</mat-grid-tile>
+                </div>
+        </mat-grid-list>
+        <div class="legend" *ngFor="let legend of legends">
+            <div>{{legend}} - {{symbolLegend[legend]}}</div>
+        </div>
+</mat-nav-list>

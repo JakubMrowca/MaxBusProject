@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { AppState } from '../services/AppState';
-import { MatTabChangeEvent } from '@angular/material';
+import { MatTabChangeEvent, MatBottomSheet } from '@angular/material';
+import { StopsSheets } from './components/stopsSheets.component';
 
 @Component({
   selector: 'app-timetable',
@@ -24,7 +25,7 @@ export class TimetableComponent implements OnInit {
   rybieCourse = true;
   activeTab ="Lim";
 
-  constructor(public appState: AppState) { }
+  constructor(public appState: AppState, private bottomSheet: MatBottomSheet) { }
 
   ngOnInit() {
     this.timetable = this.appState.timetable;
@@ -35,7 +36,7 @@ export class TimetableComponent implements OnInit {
   }
 
   showStops(course:Course){
-    
+    this.bottomSheet.open(StopsSheets, {data:course});
   }
 
   onTabClick(event: MatTabChangeEvent) {
