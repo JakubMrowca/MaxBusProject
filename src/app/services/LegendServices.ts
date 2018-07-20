@@ -5,14 +5,6 @@ import { Subscription } from "rxjs";
 import { AppVersionUpdated } from "../events/AppVersionUpdated";
 import { LocalStorageHelper } from "../helpers/LocalStorageHelper";
 
-const symbolLegend = {
-    "F": "kursuje w dni robocze",
-    "7": "kursuje w niedzielę",
-    "S": "nie kursuje w dni wolne od nauki szkolnej",
-    "P": "kursuje tylko w piątek",
-    "6": "kursuje w soboty"
-}
-
 @Injectable()
 export class LegendService {
 

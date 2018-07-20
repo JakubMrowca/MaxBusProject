@@ -67,6 +67,7 @@ import {RoutingEnum} from './helpers/RoutingEnum';
 import { AppState } from './services/AppState';
 import { NoInternet } from './events/NoInternet';
 import { HomeComponent } from './home/home.component';
+import { StopsSheets } from './timetable/components/stopsSheets.component';
 
 
 const path: Routes = [
@@ -84,7 +85,8 @@ const path: Routes = [
     StartComponent,
     TimetableComponent,
     CoursesComponent,
-    HomeComponent
+    HomeComponent,
+    StopsSheets
 
   ],
   imports: [
@@ -95,6 +97,7 @@ const path: Routes = [
     MatBottomSheetModule,
     MatButtonModule,
     MatButtonToggleModule,
+    FormsModule,
     RouterModule,
     MatCardModule,
     MatCheckboxModule,
@@ -130,6 +133,7 @@ const path: Routes = [
     MatTreeModule,
     BrowserAnimationsModule
   ],
+  entryComponents:[StopsSheets],
   providers: [NotificationService, AppState,NoInternet, LegendService,LocationDetected, CoursesFiltered, LocalStorageHelper, AppVersionUpdated,TimetableUpdated, TimetableVersionChanged, TimetableUpdateService, LocationService,TraficService],
   bootstrap: [AppComponent]
 })
