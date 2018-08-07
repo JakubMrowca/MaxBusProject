@@ -42,9 +42,9 @@ export class EventService {
         return subscribeEvent.asObservable();
     }
 
-    clearMessage<T>(x: Function) {
+    clearMessage(x: Function) {
         var type = x.name;
-        var nextEvent: Subject<T>;
+        var nextEvent: Subject<any>;
         this.events.forEach(event => {
             if (event.evenType == type)
                 nextEvent = event.subject
