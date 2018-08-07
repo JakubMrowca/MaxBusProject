@@ -48,7 +48,7 @@ export class StartComponent implements OnInit {
       .ToList();
 
     if (sendEvent)
-      this.eventServ.sendEvent<CoursesFiltered>(CoursesFiltered, new CoursesFiltered());
+      this.eventServ.sendEvent(CoursesFiltered);
   }
 
   ngOnInit() {

@@ -27,7 +27,7 @@ export class TimetableUpdateService {
     checkTimetableVersion(timeTableVersion: number) {
         var lastVersion = this.localDb.getTimetableVersion();
         if (timeTableVersion > lastVersion) {
-            this.enevtServ.sendEvent<TimetableVersionChanged>(TimetableVersionChanged, new TimetableVersionChanged());
+            this.enevtServ.sendEvent(TimetableVersionChanged);
             this.localDb.saveTimetableVersion(timeTableVersion);
             this.updateTimetable();
         }
@@ -48,7 +48,7 @@ export class TimetableUpdateService {
             var timetableEvent = new TimetableUpdated();
             timetableEvent.timetable = timetable;
             console.log("updateTimetable");
-            that.enevtServ.sendEvent<TimetableUpdated>(TimetableUpdated, timetableEvent);
+            that.enevtServ.sendEvent(TimetableUpdated, timetableEvent);
         });
     }
 }

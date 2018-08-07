@@ -71,7 +71,7 @@ export class LocationService {
                     that.currentLocation = latitudeRange[i].city;
                     var locationEvent = new LocationDetected();
                     locationEvent.currentLocation = that.currentLocation;
-                    that.eventService.sendEvent<LocationDetected>(LocationDetected,locationEvent);
+                    that.eventService.sendEvent(LocationDetected,locationEvent);
                     return;
                 }
             }
@@ -79,7 +79,7 @@ export class LocationService {
             console.log("user not allow location");
             var locationEvent = new LocationDetected()
             locationEvent.currentLocation = null;
-            that.eventService.sendEvent<LocationDetected>(LocationDetected, locationEvent);
+            that.eventService.sendEvent(LocationDetected, locationEvent);
         }, options);
     }
 

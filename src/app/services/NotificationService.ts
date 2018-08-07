@@ -22,7 +22,7 @@ export class NotificationService {
         console.log(connection);
         if(connection == "none"){
             console.log("notOnline");
-            this.eventService.sendEvent<NoInternet>(NoInternet, new NoInternet());
+            this.eventService.sendEvent(NoInternet);
         }
         else {
             var that = this;
@@ -45,11 +45,11 @@ export class NotificationService {
                     appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
                     appVersionEvent.message = notification.message;
                     console.log("appVersion change");
-                    that.eventService.sendEvent<AppVersionUpdated>(AppVersionUpdated, appVersionEvent);
+                    that.eventService.sendEvent(AppVersionUpdated, appVersionEvent);
                 }
                 else {
                     console.log("Not app version changes")
-                    that.eventService.sendEvent<NoInternet>(NoInternet, new NoInternet());
+                    that.eventService.sendEvent(NoInternet);
                 }
             });
         }

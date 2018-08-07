@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { EVENTS } from '../app.constants'
+import { IEvent } from '../events/IEvent';
 
 export class EventSet<T>{
     constructor(public subject: Subject<T>, public evenType: string) { }
@@ -20,9 +21,9 @@ export class EventService {
         });
     }
 
-    sendEvent<T>(x: Function, message: T) {
+    sendEvent(x: Function, message = null) {
         var type = x.name;
-        var nextEvent: Subject<T>;
+        var nextEvent: Subject<any>;
         this.events.forEach(event => {
             if (event.evenType == type)
                 nextEvent = event.subject
@@ -30,7 +31,7 @@ export class EventService {
         nextEvent.next(message);
     }
 
-    getMessage<T>(x: Function): Observable<T> {
+    getMessage<T extends IEvent>(x: Function): Observable<T> {
         var subscribeEvent: Subject<T>;
         var type = x.name;
         this.events.forEach(event => {
