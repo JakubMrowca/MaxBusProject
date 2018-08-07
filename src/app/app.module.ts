@@ -68,6 +68,7 @@ import { AppState } from './services/AppState';
 import { NoInternet } from './events/NoInternet';
 import { HomeComponent } from './home/home.component';
 import { StopsSheets } from './timetable/components/stopsSheets.component';
+import { MapSheet } from './start/components/mapSheet.component';
 
 
 const path: Routes = [
@@ -78,6 +79,7 @@ const path: Routes = [
   { path: "home", component:HomeComponent }
   
 ];
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -86,7 +88,8 @@ const path: Routes = [
     TimetableComponent,
     CoursesComponent,
     HomeComponent,
-    StopsSheets
+    StopsSheets,
+    MapSheet
 
   ],
   imports: [
@@ -98,7 +101,6 @@ const path: Routes = [
     MatButtonModule,
     MatButtonToggleModule,
     FormsModule,
-    RouterModule,
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
@@ -133,8 +135,8 @@ const path: Routes = [
     MatTreeModule,
     BrowserAnimationsModule
   ],
-  entryComponents:[StopsSheets],
-  providers: [NotificationService, AppState,NoInternet, LegendService,LocationDetected, CoursesFiltered, LocalStorageHelper, AppVersionUpdated,TimetableUpdated, TimetableVersionChanged, TimetableUpdateService, LocationService,TraficService],
+  entryComponents:[StopsSheets, MapSheet],
+  providers: [NotificationService, AppState, LegendService, LocalStorageHelper, TimetableUpdateService, LocationService,TraficService, EventService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

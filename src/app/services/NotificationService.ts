@@ -13,7 +13,7 @@ export class NotificationService {
 
     notificationLink: string = "https://raw.githubusercontent.com/metinowy15/MaksBusApi/master/notification.JSON";
 
-    constructor(private localDb: LocalStorageHelper, private internetEvent: NoInternet, private appVersionEvent: AppVersionUpdated) {
+    constructor(private localDb: LocalStorageHelper,private eventService:EventService) {
 
     }
 
@@ -22,7 +22,7 @@ export class NotificationService {
         console.log(connection);
         if(connection == "none"){
             console.log("notOnline");
-            this.internetEvent.sendEvent();
+            this.eventService.sendEvent<NoInternet>(NoInternet, new NoInternet());
         }
         else {
             var that = this;
@@ -38,17 +38,18 @@ export class NotificationService {
                     that.localDb.saveMessage(notification.message);
                     that.localDb.saveSchoolFreeDay(notification.schoolDayFreeFrom, notification.schoolDayFreeTo);
 
-                    that.appVersionEvent.appVersion = notification.appVersion;
-                    that.appVersionEvent.timetableVersion = notification.timetableVersion;
-                    that.appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
-                    that.appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
-                    that.appVersionEvent.message = notification.message;
+                    var appVersionEvent = new AppVersionUpdated();
+                    appVersionEvent.appVersion = notification.appVersion;
+                    appVersionEvent.timetableVersion = notification.timetableVersion;
+                    appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
+                    appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
+                    appVersionEvent.message = notification.message;
                     console.log("appVersion change");
-                    that.appVersionEvent.sendEvent();
+                    that.eventService.sendEvent<AppVersionUpdated>(AppVersionUpdated, appVersionEvent);
                 }
                 else {
                     console.log("Not app version changes")
-                    that.internetEvent.sendEvent();
+                    that.eventService.sendEvent<NoInternet>(NoInternet, new NoInternet());
                 }
             });
         }

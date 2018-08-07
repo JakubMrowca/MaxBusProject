@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { Stop } from '../models/Stop';
@@ -8,6 +8,7 @@ import { TimeEnum, TimeEnumHelper } from '../helpers/TimeEnum';
 import { TraficService } from '../services/TraficService';
 import * as moment from "moment";
 import { CoursesFiltered } from '../events/CoursesFiltered';
+import { EventService } from '../services/EventServices';
 
 @Component({
   selector: 'app-course',
@@ -17,20 +18,21 @@ import { CoursesFiltered } from '../events/CoursesFiltered';
 export class CourseComponent implements OnInit {
   @Input() direction: string;
   @Input() isStart: boolean;
-  @Input() allCourses:  List<Course>;
+  @Input() allCourses: List<Course>;
 
   timetableIsActual = true;
   timePlus: TimeEnum = TimeEnum.near;
   timeMinus: TimeEnum = TimeEnum.veryNear;
-  subscription: Subscription;
   nearCourses: Array<Course>;
   calculatingDuration = false;
   showLessPlus = false;
   showLessMinus = false;
   constTimeEnum = TimeEnum.near;
+  @Output() mapShowed = new EventEmitter<Course>();
+  @Output() coursSelected = new EventEmitter<Course>();
 
-  constructor(private traffic: TraficService, public locationService: LocationService, private courseEvent: CoursesFiltered) {
-    this.subscription = this.courseEvent.getMessage().subscribe(message => {
+  constructor(private traffic: TraficService, public locationService: LocationService, private eventService: EventService) {
+    this.eventService.getMessage<CoursesFiltered>(CoursesFiltered).subscribe(message => {
       this.setTimetable();
     })
   }
@@ -44,14 +46,15 @@ export class CourseComponent implements OnInit {
     var nearCoursesCount = this.nearCourses.length;
     var courses;
     if (this.showLessPlus == false) {
-      if(this.timePlus == TimeEnum.old){
+      if (this.timePlus == TimeEnum.old) {
         return;
       }
       this.timePlus = TimeEnumHelper.next(this.timePlus);
       courses = this.getNearCourse(this.allCourses, this.timePlus, this.timeMinus);
-      if(nearCoursesCount == courses.length){
+      if (nearCoursesCount == courses.length) {
         this.moreCourse();
-        return;}
+        return;
+      }
       this.showLessPlus = true;
     }
     else {
@@ -67,7 +70,38 @@ export class CourseComponent implements OnInit {
   }
 
   calculateTraffic(course: Course) {
+    var orderedList:Array<Stop>
     course.traficIsCalculate = true;
+    var stops = new Array<Stop>();
+    if (course.direction.startsWith("Krk")) {
+      let firstStopTime = course.firstStop.time;
+      firstStopTime.minutes = firstStopTime.minutes + 2;
+      stops.push(new Stop("Plac inw.", this.pad(firstStopTime.hours.toString(), 2) + ":" + this.pad(firstStopTime.minutes.toString(),2),{ minutes: firstStopTime.minutes, hours: firstStopTime.hours }));
+      firstStopTime.minutes = firstStopTime.minutes + 2;
+      stops.push(new Stop("Mateczne", this.pad(firstStopTime.hours.toString(), 2) + ":" + this.pad(firstStopTime.minutes.toString(),2), { minutes: firstStopTime.minutes, hours: firstStopTime.hours }));
+      firstStopTime.minutes = firstStopTime.minutes + 2;
+      stops.push(new Stop("Bieżanów", this.pad(firstStopTime.hours.toString(), 2) + ":" + this.pad(firstStopTime.minutes.toString(),2), { minutes: firstStopTime.minutes, hours: firstStopTime.hours }));
+
+      let stopsList = new List(course.stops);
+      stopsList.AddRange(stops);
+      orderedList = stopsList.OrderBy(x => x.timeString).ToArray();
+    }
+    if (course.direction.startsWith("Lim")) {
+      let lastStopTime = course.stops[course.stops.length - 2].time;
+      lastStopTime.minutes = lastStopTime.minutes +2;
+      stops.push(new Stop("Bieżanów", this.pad(lastStopTime.hours.toString(), 2) + ":" + this.pad(lastStopTime.minutes.toString(),2), { minutes: lastStopTime.minutes, hours: lastStopTime.hours }));
+      lastStopTime.minutes = lastStopTime.minutes + 2;
+      stops.push(new Stop("Mateczne", this.pad(lastStopTime.hours.toString(), 2) + ":" + this.pad(lastStopTime.minutes.toString(),2), { minutes: lastStopTime.minutes, hours: lastStopTime.hours }));
+      lastStopTime.minutes = lastStopTime.minutes + 2;
+      stops.push(new Stop("Plac inw.", this.pad(lastStopTime.hours.toString(), 2) + ":" + this.pad(lastStopTime.minutes.toString(),2), { minutes: lastStopTime.minutes, hours: lastStopTime.hours }));
+
+      let stopsList = new List(course.stops);
+      stopsList.AddRange(stops);
+      orderedList = stopsList.OrderBy(x => x.timeString).ToArray();
+    }
+
+    course.stops = orderedList;
+
     this.traffic.calculateDurrationForStop(course, 0).then(data => {
       for (let i = 0; i < this.nearCourses.length; i++) {
         if (this.nearCourses[i].direction == course.direction && this.nearCourses[i].firstStop.timeString == course.firstStop.timeString)
@@ -121,7 +155,7 @@ export class CourseComponent implements OnInit {
   }
 
   calculateTime(stop: Stop) {
-    if(stop.time == null)
+    if (stop.time == null)
       return "";
     var now = new Date();
     var stopDate = new Date();
@@ -137,14 +171,27 @@ export class CourseComponent implements OnInit {
       return resultInMinutes.toString() + " min";
   }
 
-  coursesExist(){
-    if(this.nearCourses == undefined)
+  coursesExist() {
+    if (this.nearCourses == undefined)
       return false;
     var courseCount = this.nearCourses.length;
-    if(courseCount == 0){
+    if (courseCount == 0) {
       return false;
     }
     return true;
   }
 
+  showMap(course: Course) {
+    this.mapShowed.emit(course);
+  }
+
+  go(course:Course){
+    this.coursSelected.emit(course);
+  }
+
+  pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+  }
 }

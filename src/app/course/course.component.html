@@ -32,7 +32,9 @@
         </div>
       </mat-grid-list>
       <div style="width: 100%;margin-top: 5px;text-align: center">
-        <button [disabled]="course.traficIsCalculate" (click)="calculateTraffic(course)" color="primary" mat-raised-button>Uwzglednij korki</button>
+        <button [disabled]="course.traficIsCalculate" (click)="calculateTraffic(course)" color="primary" mat-raised-button>Korki</button>
+        <button style="margin-left: 5px" *ngIf="isStart" (click)="showMap(course)" color="primary" mat-raised-button>Mapa</button>
+        <button style="margin-left: 5px" *ngIf="isStart" (click)="go(course)" class="blue-button" mat-raised-button>Jedź</button>
       </div>
     </mat-expansion-panel>
   </div>

@@ -1,24 +1,10 @@
 import { Observable, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { IEvent } from './IEvent';
 
 @Injectable()
-export class LocationDetected {
-    private subject = new Subject<any>();
+export class LocationDetected implements IEvent  {
     public currentLocation: string;
-
     constructor() {
     }
-
-    sendEvent() {
-        this.subject.next(this);
-    }
-
-    clearMessage() {
-        this.subject.next();
-    }
-
-    getMessage(): Observable<LocationDetected> {
-        return this.subject.asObservable();
-    }
-
 }

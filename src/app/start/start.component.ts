@@ -9,6 +9,9 @@ import { CoursesFiltered } from '../events/CoursesFiltered';
 import { NotificationService } from '../services/NotificationService';
 import { Message } from '../models/Message';
 import { AppVersionUpdated } from '../events/AppVersionUpdated';
+import { MatTabChangeEvent, MatBottomSheet } from '@angular/material';
+import { MapSheet } from './components/mapSheet.component';
+import { EventService } from '../services/EventServices';
 
 @Component({
   selector: 'app-start',
@@ -18,21 +21,20 @@ import { AppVersionUpdated } from '../events/AppVersionUpdated';
 export class StartComponent implements OnInit {
   startCourses: List<Course>;
   allCourses: List<Course>;
-  subscription: Subscription;
-  subsVersion: Subscription;
   direction: string;
   hideNotification = true;
   unreadNotification = false;
   message: Message;
   appVersion: number;
-  constructor(private appState: AppState, private notService: NotificationService, private locationEvent: LocationDetected, private courseEvent: CoursesFiltered, private locationService: LocationService) {
+  location: string;
+  constructor(private appState: AppState, private bottomSheet: MatBottomSheet, private notService: NotificationService, private eventServ: EventService, private locationService: LocationService) {
     this.allCourses = this.appState.allCourses;
-    this.subscription = this.locationEvent.getMessage().subscribe(message => {
+    this.eventServ.getMessage<LocationDetected>(LocationDetected).subscribe(message => {
       this.direction = this.locationService.getDirection();
       this.getCourseForDirection(true);
-
     });
     this.direction = this.appState.direction == null ? "Lim" : this.appState.direction;
+    this.location = this.appState.currentLocation;
   }
 
   getCourseForDirection(sendEvent) {
@@ -46,7 +48,7 @@ export class StartComponent implements OnInit {
       .ToList();
 
     if (sendEvent)
-      this.courseEvent.sendEvent();
+      this.eventServ.sendEvent<CoursesFiltered>(CoursesFiltered, new CoursesFiltered());
   }
 
   ngOnInit() {
@@ -65,6 +67,14 @@ export class StartComponent implements OnInit {
       }
       this.hideNotification = true;
     } else this.hideNotification = false;
+  }
+
+  onMapShowed(course: Course) {
+    this.bottomSheet.open(MapSheet, { data: course });
+  }
+
+  onCourseSelected(course: Course) {
+
   }
 
 }

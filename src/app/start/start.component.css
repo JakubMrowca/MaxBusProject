@@ -38,3 +38,19 @@ color: #fea7a7
   .unread-message {
     animation: MyColorAnimation 1s infinite;
   }
+.start{
+    margin-top: 50px;
+}
+
+.start p{
+    margin: 0px!important;
+    font-size: 14px;
+}
+.start-header{
+height: 60px;
+width: 100%; 
+display: flex;
+justify-content: center;
+flex-direction: column;
+text-align: left;
+}

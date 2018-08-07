@@ -16,11 +16,10 @@ import { TimetableVersionChanged } from "../events/TimetableVersionChanged";
 
 @Injectable()
 export class TimetableUpdateService {
-    subscription: Subscription;
     repoLink: string = "https://raw.githubusercontent.com/metinowy15/MaksBusApi/master/data.json";
 
-    constructor(private appVersionEvent: AppVersionUpdated, private timetableVersionEvent: TimetableVersionChanged,private timetableEvent: TimetableUpdated,private localDb: LocalStorageHelper) {
-        this.subscription = this.appVersionEvent.getMessage().subscribe(message => {
+    constructor( private enevtServ:EventService,private localDb: LocalStorageHelper) {
+        this.enevtServ.getMessage<AppVersionUpdated>(AppVersionUpdated).subscribe(message => {
             this.checkTimetableVersion(message.timetableVersion)
         });
     }
@@ -28,11 +27,10 @@ export class TimetableUpdateService {
     checkTimetableVersion(timeTableVersion: number) {
         var lastVersion = this.localDb.getTimetableVersion();
         if (timeTableVersion > lastVersion) {
-            this.timetableVersionEvent.sendEvent();
+            this.enevtServ.sendEvent<TimetableVersionChanged>(TimetableVersionChanged, new TimetableVersionChanged());
             this.localDb.saveTimetableVersion(timeTableVersion);
             this.updateTimetable();
         }
-
     }
 
     getTimetable(): List<Course> {
@@ -47,9 +45,10 @@ export class TimetableUpdateService {
         }).done(function (data) {
             var timetable = TimetableBuilderHelper.buildTimetableFromJson(data);
             that.localDb.saveTimetable(timetable.ToArray());
-            that.timetableEvent.timetable = timetable;
+            var timetableEvent = new TimetableUpdated();
+            timetableEvent.timetable = timetable;
             console.log("updateTimetable");
-            that.timetableEvent.sendEvent();
+            that.enevtServ.sendEvent<TimetableUpdated>(TimetableUpdated, timetableEvent);
         });
     }
 }

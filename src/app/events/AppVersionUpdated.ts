@@ -1,10 +1,8 @@
 import { Observable, Subject } from 'rxjs';
-import { Injectable } from '@angular/core';
 import { Message } from '../models/Message';
+import{IEvent} from './IEvent';
 
-@Injectable()
-export class AppVersionUpdated {
-    private subject = new Subject<any>();
+export class AppVersionUpdated implements IEvent {
     public appVersion: number;
     public timetableVersion: number;
     public schoolFreeDayFrom:string;
@@ -13,17 +11,4 @@ export class AppVersionUpdated {
 
     constructor() {
     }
-
-    sendEvent() {
-        this.subject.next(this);
-    }
-
-    clearMessage() {
-        this.subject.next();
-    }
-
-    getMessage(): Observable<AppVersionUpdated> {
-        return this.subject.asObservable();
-    }
-
 }

@@ -3,7 +3,7 @@ import { Stop } from "../models/Stop";
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs";
 import * as moment from "moment";
-import { } from '@types/googlemaps';
+import { } from 'googlemaps';
 import { Course } from "../models/Course";
 import { DirectionEnum } from "../helpers/DirectionEnum";
 
@@ -16,7 +16,10 @@ const httpOptions = {
 
 const stopNameInGoogle = {
     "Kraków": "Wita+Stwosza+4",
-    "Wieliczka": ["Kraków+Plac+Inwalidów,+30-001+Kraków", "Tesco,+Wielicka+259,+30-663+Kraków", "Galeria+NaCl,+Marszałka+Józefa+Piłsudskiego+73,+32-020+Wieliczka"],
+    "Plac inw.": "Kraków+Plac+Inwalidów,+30-001+Kraków",
+    "Mateczne": "rondo+Matecznego,+Kraków",
+    "Bieżanów": "Tesco,+Wielicka+259,+30-663+Kraków",
+    "Wieliczka": "Galeria+NaCl,+Marszałka+Józefa+Piłsudskiego+73,+32-020+Wieliczka",
     "Gdów": "Gdów,+32-420",
     "Łapanów": "Łapanów",
     "Trzciana": "Trzciana",
@@ -50,75 +53,32 @@ export class TraficService {
             time.setHours(stop.time.hours);
             time.setMinutes(stop.time.minutes);
 
-            if(time < new Date())
+            if (time < new Date())
                 resolve();
-                
+
             var timeTo = new Date();
             timeTo.setHours(nextStop.time.hours);
             timeTo.setMinutes(nextStop.time.minutes);
 
-            if (stop.city === "Kraków" &&
-                (cours.direction == DirectionEnum.KRL.toString()
-                    || cours.direction == DirectionEnum.KSL.toString()
-                    || cours.direction == DirectionEnum.KZL.toString())) {
-
-                this.calculateToKrakowWieliczka(time).then(resolve1 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve1);
-                    this.calculateDurrationForStop(cours, i + 1).then(end1 => {
-                        resolve();
-                    });
+            this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city], time).then(resolve5 => {
+                this.calculateTime(nextStop, time, timeTo, resolve5);
+                this.calculateDurrationForStop(cours, i + 1).then(end => {
+                    resolve();
                 });
-            }
-            else if (stop.city === "Wieliczka" && (
-                cours.direction == DirectionEnum.LRK.toString()
-                || cours.direction == DirectionEnum.LSK.toString()
-                || cours.direction == DirectionEnum.LZK.toString()
-            )) {
-                this.calculateToWieliczkaKrakow(time).then(resolve2 => {
-                    this.calculateTime(nextStop, time,timeTo, resolve2);
-                    this.calculateDurrationForStop(cours, i + 1).then(end2 =>{
-                        resolve();
-                    });
-                });
-            }
-            else if(stop.city === "Gdów" && nextStop.city === "Wieliczka") {
-                this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city][2], time).then(resolve3 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve3);
-                    this.calculateDurrationForStop(cours, i + 1).then(end3=>{
-                        resolve();
-                    });
-                });
-            }
-            else if(stop.city === "Wieliczka" && nextStop.city === "Gdów") {
-                this.send(stopNameInGoogle[stop.city][2], stopNameInGoogle[nextStop.city], time).then(resolve4 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve4);
-                    this.calculateDurrationForStop(cours, i + 1).then(end4=>{
-                        resolve();
-                    });
-                });
-            }
-            else {
-                this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city], time).then(resolve5 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve5);
-                    this.calculateDurrationForStop(cours, i + 1).then(end5=>{
-                        resolve();
-                    });
-                });
-            }
-
+            });
         });
 
     }
 
     calculateTime(nextStop: Stop, timeFrom, timeTo, durationInTraffic) {
-        
+
         var timeMz = moment(timeFrom).add((durationInTraffic), "seconds");
         var dateNew = timeMz.toDate();
 
         nextStop.time.hours = dateNew.getHours()
         nextStop.time.minutes = dateNew.getMinutes();
 
-        nextStop.timeString = this.pad(nextStop.time.hours.toString(), 2) + ":" + this.pad(nextStop.time.minutes.toString(),2);
+        nextStop.timeString = this.pad(nextStop.time.hours.toString(), 2) + ":" + this.pad(nextStop.time.minutes.toString(), 2);
     }
 
     send(start, end, time) {
@@ -178,7 +138,7 @@ export class TraficService {
     }
 
     pad(num, size) {
-        var s = num+"";
+        var s = num + "";
         while (s.length < size) s = "0" + s;
         return s;
     }
