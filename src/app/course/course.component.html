@@ -21,7 +21,7 @@
           </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <mat-grid-list cols="3" rowHeight="10:3">
+      <mat-grid-list cols="3" rowHeight="14:3">
         <mat-grid-tile class="gridHeader">Przystanek</mat-grid-tile>
         <mat-grid-tile class="gridHeader">Czas</mat-grid-tile>
         <mat-grid-tile class="gridHeader">Za</mat-grid-tile>
@@ -31,6 +31,11 @@
           <mat-grid-tile [ngClass]="{'first-stop' : isFirstStop(course,stop)}">{{calculateTime(stop)}}</mat-grid-tile>
         </div>
       </mat-grid-list>
+      <div style="height: 15px;">
+      <div *ngIf="progressWidth > 0 && progressWidth < 100">
+      <mat-progress-bar color="primary" mode="determinate" value="{{progressWidth}}"></mat-progress-bar>
+    </div>
+  </div>
       <div style="width: 100%;margin-top: 5px;text-align: center">
         <button [disabled]="course.traficIsCalculate" (click)="calculateTraffic(course)" color="primary" mat-raised-button>Korki</button>
         <button style="margin-left: 5px" *ngIf="isStart" (click)="showMap(course)" color="primary" mat-raised-button>Mapa</button>

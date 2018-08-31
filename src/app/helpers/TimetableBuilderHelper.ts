@@ -66,10 +66,56 @@ export class TimetableBuilderHelper {
 
             cours.stops = stops.sort(this.sortStops);
             cours.firstStop = stops[0];
+            this.additinalStops(cours);
             courses.push(cours);
         });
 
         return courses;
+    }
+
+    private static additinalStops(course:Course){
+        var orderedList: Array<Stop>
+        var stops = new Array<Stop>();
+        
+      
+
+        if (course.direction.startsWith("Krk")) {
+            let dateNow = new Date();
+            dateNow.setHours(course.firstStop.time.hours);
+            dateNow.setMinutes(course.firstStop.time.minutes);
+            dateNow.setMinutes(dateNow.getMinutes() + 7);
+            stops.push(new Stop("Plac inw.", this.pad(dateNow.getHours().toString(), 2) + ":" + this.pad(dateNow.getMinutes().toString(), 2), { minutes: dateNow.getMinutes(), hours: dateNow.getHours() }));
+            dateNow.setMinutes(dateNow.getMinutes() + 6);
+            stops.push(new Stop("Mateczne", this.pad(dateNow.getHours().toString(), 2) + ":" + this.pad(dateNow.getMinutes().toString(), 2), { minutes: dateNow.getMinutes(), hours: dateNow.getHours() }));
+            dateNow.setMinutes(dateNow.getMinutes() + 3);
+            stops.push(new Stop("Bonarka", this.pad(dateNow.getHours().toString(), 2) + ":" + this.pad(dateNow.getMinutes().toString(), 2), { minutes: dateNow.getMinutes(), hours: dateNow.getHours() }));
+            dateNow.setMinutes(dateNow.getMinutes() + 6);
+            stops.push(new Stop("Bieżanów", this.pad(dateNow.getHours().toString(), 2) + ":" + this.pad(dateNow.getMinutes().toString(), 2), { minutes: dateNow.getMinutes(), hours: dateNow.getHours() }));
+    
+            let stopsList = new List(course.stops);
+            stopsList.AddRange(stops);
+            orderedList = stopsList.OrderBy(x => x.timeString).ToArray();
+          }
+          if (course.direction.startsWith("Lim")) {
+            let dateLast = new Date();
+            dateLast.setMinutes(course.stops[course.stops.length - 2].time.minutes)
+            dateLast.setHours(course.stops[course.stops.length - 2].time.hours)
+
+            dateLast.setMinutes(dateLast.getMinutes() + 8);
+            stops.push(new Stop("Bieżanów", this.pad(dateLast.getHours().toString(), 2) + ":" + this.pad(dateLast.getMinutes().toString(), 2), { minutes: dateLast.getMinutes(), hours: dateLast.getHours() }));
+            dateLast.setMinutes(dateLast.getMinutes() + 5);
+            stops.push(new Stop("Bonarka", this.pad(dateLast.getHours().toString(), 2) + ":" + this.pad(dateLast.getMinutes().toString(), 2), { minutes: dateLast.getMinutes(), hours: dateLast.getHours() }));
+            dateLast.setMinutes(dateLast.getMinutes() + 3);
+            stops.push(new Stop("Mateczne", this.pad(dateLast.getHours().toString(), 2) + ":" + this.pad(dateLast.getMinutes().toString(), 2), { minutes: dateLast.getMinutes(), hours: dateLast.getHours() }));
+            dateLast.setMinutes(dateLast.getMinutes() + 6);
+            stops.push(new Stop("Plac inw.", this.pad(dateLast.getHours().toString(), 2) + ":" + this.pad(dateLast.getMinutes().toString(), 2), { minutes: dateLast.getMinutes(), hours: dateLast.getHours() }));
+    
+            let stopsList = new List(course.stops);
+            stopsList.AddRange(stops);
+            orderedList = stopsList.OrderBy(x => x.timeString).ToArray();
+          }
+    
+          course.stops = orderedList;
     }
 
     private static sortStops(a: Stop, b: Stop) {
@@ -84,4 +130,11 @@ export class TimetableBuilderHelper {
         if (a.time.hours == b.time.hours && a.time.minutes < b.time.minutes)
             return -1
     }
+
+    
+  private static pad(num, size) {
+    var s = num + "";
+    while (s.length < size) s = "0" + s;
+    return s;
+  }
 }

@@ -1,0 +1,20 @@
+<mat-card class="example-card">
+        <mat-card-header>
+          <mat-card-title>{{resolveDirection()}}</mat-card-title>
+          <mat-card-subtitle style="color:white">Start: {{watchCourse.stops[0].timeString}} --> Przyjazd: {{watchCourse.stops[watchCourse.stops.length - 1].timeString}}</mat-card-subtitle>
+        </mat-card-header>
+        <div id="watchedMap" style="height:300px;margin-top: 2px;margin-bottom: 6px" mat-card-image></div>
+        <mat-card-content style="margin-bottom:5px">
+          <p style="font-size: 16px;margin-bottom: 3px">
+            Nastepny przystanek za: <span style="color:white">{{resolveTime()}}</span>
+          </p>
+          <div style="color:white;font-size: 18px">{{nextStopCiti}}</div>
+          <p style="margin-top:3px">Odległość: <span style="color:white">{{distance}}</span></p>
+        </mat-card-content>
+        <mat-card-actions style="border-top:#341a70 solid 2px;
+        margin-left: -20px;
+        margin-right: -16px;">
+          <button (click)="share()" mat-button>{{isSharing}}</button>
+          <button (click)="end()" mat-button>Zakończ</button>
+        </mat-card-actions>
+      </mat-card>

@@ -6,6 +6,18 @@ import { List } from 'linqts';
 @Injectable()
 export class LocalStorageHelper{
 
+    getWatchCourse(): Course {
+        var courseString = localStorage.getItem("watchCourse");
+        if(courseString == "undefined")
+            return undefined;
+        var course = JSON.parse(courseString);
+        return course;
+    }
+    saveWatchCourse(watchCourse: Course){
+        localStorage.removeItem("watchCourse");
+        localStorage.setItem("watchCourse",JSON.stringify(watchCourse));
+    }
+
     saveTimetable(timetable:Array<Course>){
         localStorage.removeItem("timetable");
         localStorage.setItem("timetable",JSON.stringify(timetable));

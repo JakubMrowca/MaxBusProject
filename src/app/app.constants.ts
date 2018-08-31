@@ -4,6 +4,9 @@ import { AppVersionUpdated } from "./events/AppVersionUpdated";
 import { TimetableUpdated } from "./events/TimetableUpdated";
 import { TimetableVersionChanged } from "./events/TimetableVersionChanged";
 import { CoursesFiltered } from "./events/CoursesFiltered";
+import { ProgressUpdated } from "./events/ProgressUpdated";
+import { LocationChanged } from "./events/LocationChanged";
+import { LatAndLngChanged } from "./events/LatAndLngChanged";
 
 export const EVENTS = [
     NoInternet,
@@ -11,5 +14,8 @@ export const EVENTS = [
     AppVersionUpdated,
     TimetableUpdated,
     TimetableVersionChanged,
-    CoursesFiltered
+    CoursesFiltered,
+    ProgressUpdated,
+    LocationChanged,
+    LatAndLngChanged,
   ];

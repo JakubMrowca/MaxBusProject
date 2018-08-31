@@ -44,6 +44,7 @@ export class TimetableUpdateService {
             format: "json"
         }).done(function (data) {
             var timetable = TimetableBuilderHelper.buildTimetableFromJson(data);
+            console.log(timetable);
             that.localDb.saveTimetable(timetable.ToArray());
             var timetableEvent = new TimetableUpdated();
             timetableEvent.timetable = timetable;

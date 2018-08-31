@@ -1,8 +1,6 @@
 <mat-toolbar class="menu-bus-item" color="primary">
-    <button [routerLink]="['/start']" mat-button>
-        <i class="material-icons">
-            compare_arrows
-        </i>
+    <button (click)="checkStart()" mat-button>
+        <mat-icon>explore</mat-icon>
        Start</button>
     <button [routerLink]="['/courses']" mat-button>
         <i class="material-icons">

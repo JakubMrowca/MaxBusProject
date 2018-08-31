@@ -49,15 +49,10 @@ import { LocalStorageHelper } from './helpers/LocalStorageHelper';
 import { EventService } from './services/EventServices';
 import { TimetableUpdateService } from './services/TimetableUpdateService';
 import { LocationService } from './services/LocationService';
-import { AppVersionUpdated } from './events/AppVersionUpdated';
-import { TimetableUpdated } from './events/TimetableUpdated';
-import { TimetableVersionChanged } from './events/TimetableVersionChanged';
 import { TraficService } from './services/TraficService';
 import { StartComponent } from './start/start.component';
 import { TimetableComponent } from './timetable/timetable.component';
 import { LegendService } from './services/LegendServices';
-import { LocationDetected } from './events/LocationDetected';
-import { CoursesFiltered } from './events/CoursesFiltered';
 import { CoursesComponent } from './courses/courses.component';
 import {
   RouterModule,
@@ -65,10 +60,11 @@ import {
 } from '@angular/router';
 import {RoutingEnum} from './helpers/RoutingEnum';
 import { AppState } from './services/AppState';
-import { NoInternet } from './events/NoInternet';
 import { HomeComponent } from './home/home.component';
 import { StopsSheets } from './timetable/components/stopsSheets.component';
 import { MapSheet } from './start/components/mapSheet.component';
+import { watchedCourseComponent } from './start/components/watchedCourse.component';
+import { BusLocationServices } from './services/BusLocationServices';
 
 
 const path: Routes = [
@@ -85,6 +81,7 @@ const path: Routes = [
     AppComponent,
     CourseComponent,
     StartComponent,
+    watchedCourseComponent,
     TimetableComponent,
     CoursesComponent,
     HomeComponent,
@@ -136,7 +133,7 @@ const path: Routes = [
     BrowserAnimationsModule
   ],
   entryComponents:[StopsSheets, MapSheet],
-  providers: [NotificationService, AppState, LegendService, LocalStorageHelper, TimetableUpdateService, LocationService,TraficService, EventService],
+  providers: [NotificationService, AppState, LegendService, LocalStorageHelper, TimetableUpdateService, LocationService,TraficService, EventService,BusLocationServices],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

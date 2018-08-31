@@ -9,7 +9,10 @@ import { TraficService } from '../services/TraficService';
 import * as moment from "moment";
 import { CoursesFiltered } from '../events/CoursesFiltered';
 import { EventService } from '../services/EventServices';
-
+import { ProgressUpdated } from '../events/ProgressUpdated';
+import { LocationChanged } from '../events/LocationChanged';
+import { MatSnackBar } from '@angular/material';
+declare let navigator: any;
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
@@ -28,13 +31,20 @@ export class CourseComponent implements OnInit {
   showLessPlus = false;
   showLessMinus = false;
   constTimeEnum = TimeEnum.near;
+  progressWidth = 0;
   @Output() mapShowed = new EventEmitter<Course>();
   @Output() coursSelected = new EventEmitter<Course>();
 
-  constructor(private traffic: TraficService, public locationService: LocationService, private eventService: EventService) {
+  constructor(private traffic: TraficService,public matSnackBar:MatSnackBar, public locationService: LocationService, private eventService: EventService) {
     this.eventService.getMessage<CoursesFiltered>(CoursesFiltered).subscribe(message => {
       this.setTimetable();
-    })
+    });
+    this.eventService.getMessage<ProgressUpdated>(ProgressUpdated).subscribe(message => {
+      this.progressWidth = message.progress;
+    });
+    this.eventService.getMessage<LocationChanged>(LocationChanged).subscribe(message =>{
+      this.setTimetable();
+    });
   }
 
   getNearCourse(courses: List<Course>, timePlus: TimeEnum, timeMinus: TimeEnum): Array<Course> {
@@ -70,45 +80,25 @@ export class CourseComponent implements OnInit {
   }
 
   calculateTraffic(course: Course) {
-    var orderedList:Array<Stop>
+    var connection = navigator.connection.type;
+    console.log(connection);
+    if(connection == "none"){
+      this.matSnackBar.open("Brak połączenia z siecią!", "", {
+        duration: 2000,
+      });
+      return;
+    }
     course.traficIsCalculate = true;
-    var stops = new Array<Stop>();
-    if (course.direction.startsWith("Krk")) {
-      let firstStopTime = course.firstStop.time;
-      firstStopTime.minutes = firstStopTime.minutes + 2;
-      stops.push(new Stop("Plac inw.", this.pad(firstStopTime.hours.toString(), 2) + ":" + this.pad(firstStopTime.minutes.toString(),2),{ minutes: firstStopTime.minutes, hours: firstStopTime.hours }));
-      firstStopTime.minutes = firstStopTime.minutes + 2;
-      stops.push(new Stop("Mateczne", this.pad(firstStopTime.hours.toString(), 2) + ":" + this.pad(firstStopTime.minutes.toString(),2), { minutes: firstStopTime.minutes, hours: firstStopTime.hours }));
-      firstStopTime.minutes = firstStopTime.minutes + 2;
-      stops.push(new Stop("Bieżanów", this.pad(firstStopTime.hours.toString(), 2) + ":" + this.pad(firstStopTime.minutes.toString(),2), { minutes: firstStopTime.minutes, hours: firstStopTime.hours }));
-
-      let stopsList = new List(course.stops);
-      stopsList.AddRange(stops);
-      orderedList = stopsList.OrderBy(x => x.timeString).ToArray();
-    }
-    if (course.direction.startsWith("Lim")) {
-      let lastStopTime = course.stops[course.stops.length - 2].time;
-      lastStopTime.minutes = lastStopTime.minutes +2;
-      stops.push(new Stop("Bieżanów", this.pad(lastStopTime.hours.toString(), 2) + ":" + this.pad(lastStopTime.minutes.toString(),2), { minutes: lastStopTime.minutes, hours: lastStopTime.hours }));
-      lastStopTime.minutes = lastStopTime.minutes + 2;
-      stops.push(new Stop("Mateczne", this.pad(lastStopTime.hours.toString(), 2) + ":" + this.pad(lastStopTime.minutes.toString(),2), { minutes: lastStopTime.minutes, hours: lastStopTime.hours }));
-      lastStopTime.minutes = lastStopTime.minutes + 2;
-      stops.push(new Stop("Plac inw.", this.pad(lastStopTime.hours.toString(), 2) + ":" + this.pad(lastStopTime.minutes.toString(),2), { minutes: lastStopTime.minutes, hours: lastStopTime.hours }));
-
-      let stopsList = new List(course.stops);
-      stopsList.AddRange(stops);
-      orderedList = stopsList.OrderBy(x => x.timeString).ToArray();
-    }
-
-    course.stops = orderedList;
-
+    this.progressWidth = 1;
     this.traffic.calculateDurrationForStop(course, 0).then(data => {
       for (let i = 0; i < this.nearCourses.length; i++) {
         if (this.nearCourses[i].direction == course.direction && this.nearCourses[i].firstStop.timeString == course.firstStop.timeString)
           this.nearCourses[i] = course;
       }
+    }, error => {
+      course.traficIsCalculate = false;
+      this.progressWidth = 0;
     });
-
   }
 
   isFirstStop(course: Course, stop: Stop) {
@@ -185,13 +175,7 @@ export class CourseComponent implements OnInit {
     this.mapShowed.emit(course);
   }
 
-  go(course:Course){
+  go(course: Course) {
     this.coursSelected.emit(course);
-  }
-
-  pad(num, size) {
-    var s = num+"";
-    while (s.length < size) s = "0" + s;
-    return s;
   }
 }
