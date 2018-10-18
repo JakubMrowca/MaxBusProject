@@ -6,6 +6,7 @@ export class Course{
     public firstStop:Stop;
     public stops:Array<Stop>;
     public traficIsCalculate:Boolean;
+    public isTelesfor:Boolean;
 
     constructor(){
         this.stops = new Array<Stop>();

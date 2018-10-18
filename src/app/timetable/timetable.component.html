@@ -21,7 +21,7 @@
   </mat-tab-group>
   <div [ngClass]="{'filter-bar-hidden' : hideFilterBar}" class="filter-bar">
     <div *ngIf="!hideFilterBar">
-      <mat-grid-list cols="4" rowHeight="10:3">
+      <mat-grid-list cols="5" rowHeight="8:3">
         <mat-grid-tile>
           <mat-checkbox [(ngModel)]="zegocinaCourse" (change)="filterCourses()" color='primary'></mat-checkbox>
         </mat-grid-tile>
@@ -31,6 +31,9 @@
         <mat-grid-tile>
           <mat-checkbox [(ngModel)]="rybieCourse" (change)="filterCourses()" color='primary'></mat-checkbox>
         </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-checkbox [(ngModel)]="tymbarkCourse" (change)="filterCourses()" color='primary'></mat-checkbox>
+        </mat-grid-tile>
         <mat-grid-tile (click)="filterBarClick()" style="margin-top: 7px!important">
           <i class="material-icons">
             arrow_forward
@@ -39,6 +42,7 @@
         <mat-grid-tile>Żegocina</mat-grid-tile>
         <mat-grid-tile>Szyk</mat-grid-tile>
         <mat-grid-tile>Rybie</mat-grid-tile>
+        <mat-grid-tile>Tymbark</mat-grid-tile>
       </mat-grid-list>
     </div>
     <div (click)="filterBarClick()" class="filter-options" *ngIf="hideFilterBar">

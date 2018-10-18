@@ -167,22 +167,26 @@ export class watchedCourseComponent implements OnInit {
 
     resolveDirection() {
         switch (this.watchCourse.direction) {
-            case "Krk-Że-Lim":
-                return "Kraków - Zegocina - Limanowa"
-            case "Krk-Ry-Lim":
-                return "Kraków - Stare rybie - Limanowa"
-            case "Krk-Sz-Lim":
-                return "Kraków - Szyk - Limanowa"
-            case "Lim-Sz-Krk":
-                return "Limanowa - Szyk - Kraków"
-            case "Lim-Że-Krk":
-                return "Limanowa - Zegocina - Kraków"
-            case "Lim-Ry-Krk":
-                return "Limanowa - Stare rybie - Kraków"
-            default:
-                break;
+          case "Krk-Że-Lim":
+            return "Kraków - Zegocina - Limanowa"
+          case "Krk-Ry-Lim":
+            return "Kraków - Stare rybie - Limanowa"
+          case "Krk-Sz-Lim":
+            return "Kraków - Szyk - Limanowa"
+          case "Lim-Sz-Krk":
+            return "Limanowa - Szyk - Kraków"
+          case "Lim-Że-Krk":
+            return "Limanowa - Zegocina - Kraków"
+          case "Lim-Ry-Krk":
+            return "Limanowa - Stare rybie - Kraków"
+          case "Lim-Ty-Krk":
+            return "Limanowa - Tymbark - Kraków"
+          case "Krk-Ty-Lim":
+            return "Kraków - Tymbark - Limanowa"
+          default:
+            break;
         }
-    }
+      }
 
     getNextStop(): string {
         var locationIndex;

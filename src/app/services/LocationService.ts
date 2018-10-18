@@ -57,6 +57,20 @@ export class LocationService {
         latFrom: 49.845080336168024,
         longFrom: 20.36998420142902,
         city: "Trzciana"
+    }, {
+        latFrom: 49.811551,
+        longFrom: 20.230321,
+        city: "Lasocice"
+    },
+    {
+        latFrom: 49.772098,
+        longFrom: 20.232453,
+        city: "Jodłownik"
+    },
+    {
+        latFrom: 49.730311,
+        longFrom: 20.324225,
+        city: "Tymbark"
     },
     {
         latFrom: 49.813078229059876,
@@ -101,6 +115,9 @@ export class LocationService {
             case "Laskowa":
             case "Rybie":
             case "Szyk":
+            case "Lasocice":
+            case "Tymbark":
+            case "Jodłownik":
             case "Limanowa":
                 return "Lim";
         }

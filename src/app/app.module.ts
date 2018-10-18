@@ -65,6 +65,7 @@ import { StopsSheets } from './timetable/components/stopsSheets.component';
 import { MapSheet } from './start/components/mapSheet.component';
 import { watchedCourseComponent } from './start/components/watchedCourse.component';
 import { BusLocationServices } from './services/BusLocationServices';
+import { OptionsSheets } from './start/components/options-sheets.component';
 
 
 const path: Routes = [
@@ -86,6 +87,7 @@ const path: Routes = [
     CoursesComponent,
     HomeComponent,
     StopsSheets,
+    OptionsSheets,
     MapSheet
 
   ],
@@ -132,7 +134,7 @@ const path: Routes = [
     MatTreeModule,
     BrowserAnimationsModule
   ],
-  entryComponents:[StopsSheets, MapSheet],
+  entryComponents:[StopsSheets, MapSheet,OptionsSheets],
   providers: [NotificationService, AppState, LegendService, LocalStorageHelper, TimetableUpdateService, LocationService,TraficService, EventService,BusLocationServices],
   bootstrap: [AppComponent]
 })

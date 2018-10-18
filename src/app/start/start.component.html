@@ -15,15 +15,15 @@
     <div class="row header">
       <div class="direction-menu">
         <button [disabled]="progressWidth > 0 && progressWidth < 100" (click)="changeDirection()">
-          <img *ngIf="direction == 'Lim'" src="../../assets/Krk.png" width="25px" height="25px">
-          <img *ngIf="direction == 'Krk'" src="../../assets/Lim.png" width="25px" height="25px">
+          <img *ngIf="direction == 'Lim'" src="images/Krk.png" width="25px" height="25px">
+          <img *ngIf="direction == 'Krk'" src="images/Lim.png" width="25px" height="25px">
         </button>
         <button [disabled]="progressWidth > 0 && progressWidth < 100" [ngClass]="{'active' : travelMode == 'WALKING'}" (click)="changeTravelMode('WALKING')"><img
-            src="../../assets/walk.png" width="25px" height="25px"></button>
+            src="images/walk.png" width="25px" height="25px"></button>
         <button [disabled]="progressWidth > 0 && progressWidth < 100" [ngClass]="{'active' : travelMode == 'BICYCLING'}" (click)="changeTravelMode('BICYCLING')"><img
-            src="../../assets/bike.png" width="25px" height="25px"></button>
+            src="images/bike.png" width="25px" height="25px"></button>
         <button [disabled]="progressWidth > 0 && progressWidth < 100" [ngClass]="{'active' : travelMode == 'DRIVING'}" (click)="changeTravelMode('DRIVING')"><img
-            src="../../assets/auto.png" width="25px" height="25px"></button>
+            src="images/auto.png" width="25px" height="25px"></button>
       </div>
       <div style="padding-top:10px;text-align: center;font-size: 14px; background-color: #5255e0; height: 110px;">
         <div *ngIf="!searchEnd">Wybierz kierunek
@@ -41,15 +41,9 @@
         </div>
       </div>
     </div>
-    <div *ngIf="searchEnd" style="text-align: center;font-size: 14px;border-top: #341a70 solid 2px; background-color: #5255e0;">
-      <button [disabled]="nearCourse.traficIsCalculate" style="width:150px" mat-button (click)="calculateTrafic()">Uwzglednij
-        korki</button><button style="width:150px;margin-left:15px" (click)="go()" mat-button>Jedź</button>
-    </div>
     <div id="mapStart" class="row content flex-map">
     </div>
   </div>
-  <div [ngClass]="{'notification-hidden' : hideNotification}" (click)="notificationClick()" class="notification">
-    <span [ngClass]="{'unread-message' : message.unread}" class="app-version">{{appVersion}}</span>
-    <span style="font-size: 20px;float:left;margin-top: -3px;margin-left:10px">{{message.text}}</span>
-  </div>
+  <div *ngIf="this.nearCourse" (click)="showOptions()" style="width:35px;position:fixed;bottom:0px;left:47%;border-top-left-radius: 10px;border-top-right-radius: 10px;text-align: center;background-color: #5255e0"> <i class="material-icons">
+    more_horiz</i> </div>
 </div>

@@ -38,10 +38,10 @@ export class AppComponent {
 
     this.eventSubscriptionInit();
     var that = this;
-    // document.addEventListener('deviceready', () => {
+    document.addEventListener('deviceready', () => {
     console.log("deviceIsReady");
     that.notService.updateNotification();
-    // });
+    });
 
     document.addEventListener("online", this.connected, false);
   }
@@ -108,17 +108,17 @@ export class AppComponent {
         }
       }
       )
-    // this.locationService.locationIsEnabled().then(data => {
-    //   this.zone.run(() => {
-    //     if (data == true)
-    //       this.router.navigate(["start"]);
-    //     else {
-    //       this.snackBar.open("Udostpnij lokalizacje!", "", {
-    //         duration: 2000,
-    //       });
-    //     }
-    //   })
-    // });
+    this.locationService.locationIsEnabled().then(data => {
+      this.zone.run(() => {
+        if (data == true)
+          this.router.navigate(["start"]);
+        else {
+          this.snackBar.open("Udostpnij lokalizacje!", "", {
+            duration: 2000,
+          });
+        }
+      })
+    });
   }
 
   afterNotificationUpdate() {

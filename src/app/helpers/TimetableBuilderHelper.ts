@@ -35,6 +35,12 @@ export class TimetableBuilderHelper {
             if (element.kurs == "Zegocina-Krakow") {
                 courses.AddRange(this.createCourses(element.kursy, DirectionEnum.LZK));
             }
+            if (element.kurs == "Limanowa-Tymbark") {
+                courses.AddRange(this.createCourses(element.kursy, DirectionEnum.KTL));
+            }
+            if (element.kurs == "Tymbark-Limanowa") {
+                courses.AddRange(this.createCourses(element.kursy, DirectionEnum.LTK));
+            }
         });
         return courses;
     }
@@ -44,7 +50,9 @@ export class TimetableBuilderHelper {
 
         coursesObject.forEach(kurs => {
             let cours = new Course();
-
+            if(direction.toString().includes("Ty"))
+                cours.isTelesfor = true;
+                
             if (directionOr == null)
                 cours.direction = direction.toString();
             else {
@@ -69,7 +77,6 @@ export class TimetableBuilderHelper {
             this.additinalStops(cours);
             courses.push(cours);
         });
-
         return courses;
     }
 
@@ -137,4 +144,5 @@ export class TimetableBuilderHelper {
     while (s.length < size) s = "0" + s;
     return s;
   }
+
 }

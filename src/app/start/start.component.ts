@@ -17,6 +17,7 @@ import { TraficService } from '../services/TraficService';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { initDomAdapter } from '../../../node_modules/@angular/platform-browser/src/browser';
 import { BusLocationServices } from '../services/BusLocationServices';
+import { OptionsSheets } from './components/options-sheets.component';
 const secondsCounter = interval(15000);
 
 @Component({
@@ -69,8 +70,7 @@ export class StartComponent implements OnInit {
       this.location = "Limanowa";
     this.watchCourse = this.appState.getWatchCourse();
     this.subscription = this.eventServ.getMessage<LocationChanged>(LocationChanged).subscribe(message => {
-      this.getCourseForDirection(true);
-
+      // this.getCourseForDirection(true);
     })
   }
 
@@ -142,6 +142,20 @@ export class StartComponent implements OnInit {
     });
   }
 
+  showOptions(){
+    this.bottomSheet.open(OptionsSheets, {data:this.message.text}).afterDismissed().subscribe(result =>{
+        if(result == "calculateTrafic" && this.nearCourse.traficIsCalculate != true){
+          this.calculateTrafic();
+        }
+        if(result == "ride"){
+          this.go();
+        }
+        if(result == "refresh"){
+          this.getCourseForDirection(true);
+        }
+    });
+  }
+
   searchNearCourse(minPlus = 110) {
     var date = new Date();
     date.setSeconds(date.getSeconds() + this.nearStop.data.duration.value);
@@ -164,7 +178,6 @@ export class StartComponent implements OnInit {
     var directionsDisplay = new google.maps.DirectionsRenderer();
     var origin = new google.maps.LatLng(this.appState.yourCord.lat, this.appState.yourCord.lng);
     var nearStopLatLng = this.locationService.getLatLngForStop(this.nearCourse.firstStop);
-    if(this.map == undefined)
     this.map = new google.maps.Map(document.getElementById('mapStart'), {
       zoom: 11,
       center: nearStopLatLng,
@@ -232,6 +245,7 @@ export class StartComponent implements OnInit {
   }
 
   getCourseForDirection(sendEvent) {
+    console.log("tak")
     var that = this;
     this.startCourses = this.allCourses.Where(x => x.direction.startsWith(this.direction))
       .OrderBy(x => {
@@ -276,12 +290,9 @@ export class StartComponent implements OnInit {
 
   ngOnInit() {
     this.interval = secondsCounter.subscribe(n => {
-      this.locationService.locationIsEnabled().then(resolve => {
-        if (resolve == true)
           this.locationService.startWatchPosition();
-          if(this.watchCourse == undefined && this.nearCourse != undefined)
-            this.initMap(this.nearCourse);
-      })
+          //  if(this.watchCourse == undefined && this.nearCourse != undefined)
+          //    this.initMap(this.nearCourse);
     });
     console.log("start");
     this.getCourseForDirection(false);
@@ -365,6 +376,10 @@ export class StartComponent implements OnInit {
         return "Limanowa - Zegocina - Kraków"
       case "Lim-Ry-Krk":
         return "Limanowa - Stare rybie - Kraków"
+      case "Lim-Ty-Krk":
+        return "Limanowa - Tymbark - Kraków"
+      case "Krk-Ty-Lim":
+        return "Kraków - Tymbark - Limanowa"
       default:
         break;
     }

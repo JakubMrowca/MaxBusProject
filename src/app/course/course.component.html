@@ -3,7 +3,7 @@
     <h3>Brak kursów</h3>
   </div>
   <div *ngIf="coursesExist()">
-    <mat-expansion-panel class='my-animation' *ngFor="let course of nearCourses" style="margin-bottom: 10px">
+    <mat-expansion-panel class='my-animation' [ngClass]="{'telesforColor': course.isTelesfor}" *ngFor="let course of nearCourses" style="margin-bottom: 10px">
       <mat-expansion-panel-header>
         <mat-panel-title>
           <div style="margin: 0 auto">
