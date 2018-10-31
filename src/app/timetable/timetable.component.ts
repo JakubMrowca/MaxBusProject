@@ -23,6 +23,7 @@ export class TimetableComponent implements OnInit {
   zegocinaCourse = true;
   szykCourse = true;
   rybieCourse = true;
+  tymbarkCourse = true;
   activeTab ="Lim";
 
   constructor(public appState: AppState, private bottomSheet: MatBottomSheet) { }
@@ -73,6 +74,8 @@ export class TimetableComponent implements OnInit {
     if(direction.includes("Że") && this.zegocinaCourse == true)
       return true;
     if(direction.includes("Ry") && this.rybieCourse == true)
+      return true;
+    if(direction.includes("Ty") && this.tymbarkCourse == true)
       return true;
 
     return false

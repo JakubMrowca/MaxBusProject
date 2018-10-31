@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
-import { CoursesFiltered } from '../events/CoursesFiltered';
 import { AppState } from '../services/AppState';
 
 @Component({
@@ -13,7 +12,7 @@ export class CoursesComponent implements OnInit {
   allCourses:List<Course>
   limCourses: List<Course>;
   krkCourses: List<Course>;
-  constructor(private courseEvent:CoursesFiltered, private appState:AppState) { 
+  constructor(private appState:AppState) { 
     this.allCourses = this.appState.allCourses;
   }
 

@@ -49,15 +49,10 @@ import { LocalStorageHelper } from './helpers/LocalStorageHelper';
 import { EventService } from './services/EventServices';
 import { TimetableUpdateService } from './services/TimetableUpdateService';
 import { LocationService } from './services/LocationService';
-import { AppVersionUpdated } from './events/AppVersionUpdated';
-import { TimetableUpdated } from './events/TimetableUpdated';
-import { TimetableVersionChanged } from './events/TimetableVersionChanged';
 import { TraficService } from './services/TraficService';
 import { StartComponent } from './start/start.component';
 import { TimetableComponent } from './timetable/timetable.component';
 import { LegendService } from './services/LegendServices';
-import { LocationDetected } from './events/LocationDetected';
-import { CoursesFiltered } from './events/CoursesFiltered';
 import { CoursesComponent } from './courses/courses.component';
 import {
   RouterModule,
@@ -65,9 +60,12 @@ import {
 } from '@angular/router';
 import {RoutingEnum} from './helpers/RoutingEnum';
 import { AppState } from './services/AppState';
-import { NoInternet } from './events/NoInternet';
 import { HomeComponent } from './home/home.component';
 import { StopsSheets } from './timetable/components/stopsSheets.component';
+import { MapSheet } from './start/components/mapSheet.component';
+import { watchedCourseComponent } from './start/components/watchedCourse.component';
+import { BusLocationServices } from './services/BusLocationServices';
+import { OptionsSheets } from './start/components/options-sheets.component';
 
 
 const path: Routes = [
@@ -78,15 +76,19 @@ const path: Routes = [
   { path: "home", component:HomeComponent }
   
 ];
+
 @NgModule({
   declarations: [
     AppComponent,
     CourseComponent,
     StartComponent,
+    watchedCourseComponent,
     TimetableComponent,
     CoursesComponent,
     HomeComponent,
-    StopsSheets
+    StopsSheets,
+    OptionsSheets,
+    MapSheet
 
   ],
   imports: [
@@ -98,7 +100,6 @@ const path: Routes = [
     MatButtonModule,
     MatButtonToggleModule,
     FormsModule,
-    RouterModule,
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,
@@ -133,8 +134,8 @@ const path: Routes = [
     MatTreeModule,
     BrowserAnimationsModule
   ],
-  entryComponents:[StopsSheets],
-  providers: [NotificationService, AppState,NoInternet, LegendService,LocationDetected, CoursesFiltered, LocalStorageHelper, AppVersionUpdated,TimetableUpdated, TimetableVersionChanged, TimetableUpdateService, LocationService,TraficService],
+  entryComponents:[StopsSheets, MapSheet,OptionsSheets],
+  providers: [NotificationService, AppState, LegendService, LocalStorageHelper, TimetableUpdateService, LocationService,TraficService, EventService,BusLocationServices],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

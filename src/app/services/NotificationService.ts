@@ -7,24 +7,29 @@ import { EventService } from './EventServices';
 import { AppVersionUpdated } from '../events/AppVersionUpdated';
 import { TagPlaceholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { NoInternet } from '../events/NoInternet';
+import { ProgressInfo } from '../events/ProgressInfo';
 declare let navigator: any;
 @Injectable()
 export class NotificationService {
 
     notificationLink: string = "https://raw.githubusercontent.com/metinowy15/MaksBusApi/master/notification.JSON";
 
-    constructor(private localDb: LocalStorageHelper, private internetEvent: NoInternet, private appVersionEvent: AppVersionUpdated) {
+    constructor(private localDb: LocalStorageHelper,private eventService:EventService) {
 
     }
 
     updateNotification() {
         var connection = navigator.connection.type;
         console.log(connection);
+        this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nawiązywanie połączenia z internetem"));
+
         if(connection == "none"){
             console.log("notOnline");
-            this.internetEvent.sendEvent();
+            this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Brak połączenia"));
+            this.eventService.sendEvent(NoInternet);
         }
         else {
+            this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Sprawdzanie aktualizacji"));
             var that = this;
             $.getJSON(this.notificationLink, {
                 format: "json"
@@ -38,17 +43,20 @@ export class NotificationService {
                     that.localDb.saveMessage(notification.message);
                     that.localDb.saveSchoolFreeDay(notification.schoolDayFreeFrom, notification.schoolDayFreeTo);
 
-                    that.appVersionEvent.appVersion = notification.appVersion;
-                    that.appVersionEvent.timetableVersion = notification.timetableVersion;
-                    that.appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
-                    that.appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
-                    that.appVersionEvent.message = notification.message;
+                    var appVersionEvent = new AppVersionUpdated();
+                    appVersionEvent.appVersion = notification.appVersion;
+                    appVersionEvent.timetableVersion = notification.timetableVersion;
+                    appVersionEvent.schoolFreeDayFrom = notification.schoolDayFreeFrom;
+                    appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
+                    appVersionEvent.message = notification.message;
                     console.log("appVersion change");
-                    that.appVersionEvent.sendEvent();
+                    that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nowa wersja aplikacji:"+ notification.appVersion.toString()));
+                    that.eventService.sendEvent(AppVersionUpdated, appVersionEvent);
                 }
                 else {
                     console.log("Not app version changes")
-                    that.internetEvent.sendEvent();
+                    that.eventService.sendEvent(NoInternet);
+                    that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Rozkład jazdy aktualny"));
                 }
             });
         }

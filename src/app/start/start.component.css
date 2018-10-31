@@ -17,7 +17,12 @@
     bottom: 2px;
     right: 4px;
 }
-
+.button-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%!important;
+}
 .app-version{
     margin-right:15px;font-size: 20px;padding-bottom: 10px;float:right;margin-top: -3px;color: #7b1fa2;
 }
@@ -38,3 +43,99 @@ color: #fea7a7
   .unread-message {
     animation: MyColorAnimation 1s infinite;
   }
+.start{
+    margin-top: 50px;
+}
+
+.start p{
+    margin: 0px!important;
+    font-size: 14px;
+}
+.start-header{
+    width: 100%;
+    font-size: 16px!important;
+}
+
+.start-header a{
+    margin-left: 10px;
+}
+.gridHeader > ::ng-deep figure {
+    justify-content: flex-start !important;
+}
+
+.gridHeaderLeft >::ng-deep figure {
+    justify-content:flex-end!important;
+}
+.box {
+ 
+    display: flex;
+    flex-flow: column;
+    height: calc(100vh - 40px);
+}
+
+.box .row.header {
+    flex: 0 1 170px;
+    /* The above is shorthand for:
+    flex-grow: 0,
+    flex-shrink: 1,
+    flex-basis: auto
+    */
+}
+
+.box .row.content {
+    flex: 1 1 auto;
+}
+
+h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-top: 0;
+    text-transform: capitalize;
+}
+
+p {
+    margin: 0;
+}
+
+h2 span {
+    color: #ffbc13;
+}
+
+.header button {
+    background: rgb(255, 255, 255); border: 2px solid #3a1d6c; padding: 4px 10px; color: white; cursor: pointer; border-radius: 25px;
+}
+
+.header button.active {
+    background: #341a70; border: 2px solid #2c1774;
+}
+
+.header button.active > img {
+    -webkit-filter: brightness(2.0);
+    filter: brightness(2.0);
+}
+
+.time {
+    font-size: 26px;
+}
+
+.place {
+    font-size: 18px;
+}
+.direction-menu {
+    padding-top:10px;
+    text-align: center; background-color: #5255e0; height: auto;
+}
+
+.direction-menu button{
+    margin-right:5px
+}
+
+#mapStart{
+    width:100%;
+}
+
+.flex-map{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}

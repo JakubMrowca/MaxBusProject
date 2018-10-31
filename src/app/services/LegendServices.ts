@@ -1,19 +1,17 @@
 import { Injectable } from "@angular/core";
 import { Course } from "../models/Course";
 import * as moment from "moment";
-import { Subscription } from "rxjs";
 import { AppVersionUpdated } from "../events/AppVersionUpdated";
 import { LocalStorageHelper } from "../helpers/LocalStorageHelper";
+import { EventService } from "./EventServices";
 
 @Injectable()
 export class LegendService {
-
-    subscription: Subscription
     schoolFreeDayFrom;
     schoolFreeDayTo;
 
-    constructor(private appVersionEvent: AppVersionUpdated, private localDb: LocalStorageHelper) {
-        this.subscription = this.appVersionEvent.getMessage().subscribe(message => {
+    constructor(private eventService: EventService, private localDb: LocalStorageHelper) {
+        this.eventService.getMessage<AppVersionUpdated>(AppVersionUpdated).subscribe(message => {
             this.schoolFreeDayFrom = message.schoolFreeDayFrom;
             this.schoolFreeDayTo = message.schoolFreeDayTo;
         });

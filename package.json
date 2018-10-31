@@ -24,6 +24,7 @@
     "@angular/router": "^6.0.7",
     "@google/maps": "^0.5.3",
     "@types/googlemaps": "^3.30.10",
+    "classlist.js": "^1.1.20150312",
     "core-js": "^2.5.4",
     "crypto": "^1.0.1",
     "https": "^1.0.0",
@@ -31,6 +32,7 @@
     "linqts": "^1.11.0",
     "moment": "^2.22.2",
     "rxjs": "^6.0.0",
+    "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

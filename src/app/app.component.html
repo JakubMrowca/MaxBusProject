@@ -1,8 +1,6 @@
 <mat-toolbar class="menu-bus-item" color="primary">
-    <button [routerLink]="['/start']" mat-button>
-        <i class="material-icons">
-            compare_arrows
-        </i>
+    <button (click)="checkStart()" mat-button>
+        <mat-icon>explore</mat-icon>
        Start</button>
     <button [routerLink]="['/courses']" mat-button>
         <i class="material-icons">
@@ -17,7 +15,10 @@
 </mat-toolbar>
 <div *ngIf="!locationIsDetected || !timetableIsActual" class="spinner-center">
     <mat-spinner></mat-spinner>
+
+    
 </div>
+<div *ngIf="!locationIsDetected || !timetableIsActual" class="progressInfo">{{progressInfo}}</div>
 <div *ngIf="locationIsDetected && timetableIsActual">
     <router-outlet></router-outlet>
 </div>

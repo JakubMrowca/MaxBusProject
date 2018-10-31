@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { Stop } from '../models/Stop';
@@ -8,7 +8,11 @@ import { TimeEnum, TimeEnumHelper } from '../helpers/TimeEnum';
 import { TraficService } from '../services/TraficService';
 import * as moment from "moment";
 import { CoursesFiltered } from '../events/CoursesFiltered';
-
+import { EventService } from '../services/EventServices';
+import { ProgressUpdated } from '../events/ProgressUpdated';
+import { LocationChanged } from '../events/LocationChanged';
+import { MatSnackBar } from '@angular/material';
+declare let navigator: any;
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
@@ -17,22 +21,30 @@ import { CoursesFiltered } from '../events/CoursesFiltered';
 export class CourseComponent implements OnInit {
   @Input() direction: string;
   @Input() isStart: boolean;
-  @Input() allCourses:  List<Course>;
+  @Input() allCourses: List<Course>;
 
   timetableIsActual = true;
   timePlus: TimeEnum = TimeEnum.near;
   timeMinus: TimeEnum = TimeEnum.veryNear;
-  subscription: Subscription;
   nearCourses: Array<Course>;
   calculatingDuration = false;
   showLessPlus = false;
   showLessMinus = false;
   constTimeEnum = TimeEnum.near;
+  progressWidth = 0;
+  @Output() mapShowed = new EventEmitter<Course>();
+  @Output() coursSelected = new EventEmitter<Course>();
 
-  constructor(private traffic: TraficService, public locationService: LocationService, private courseEvent: CoursesFiltered) {
-    this.subscription = this.courseEvent.getMessage().subscribe(message => {
+  constructor(private traffic: TraficService,public matSnackBar:MatSnackBar, public locationService: LocationService, private eventService: EventService) {
+    this.eventService.getMessage<CoursesFiltered>(CoursesFiltered).subscribe(message => {
       this.setTimetable();
-    })
+    });
+    this.eventService.getMessage<ProgressUpdated>(ProgressUpdated).subscribe(message => {
+      this.progressWidth = message.progress;
+    });
+    this.eventService.getMessage<LocationChanged>(LocationChanged).subscribe(message =>{
+      this.setTimetable();
+    });
   }
 
   getNearCourse(courses: List<Course>, timePlus: TimeEnum, timeMinus: TimeEnum): Array<Course> {
@@ -44,14 +56,15 @@ export class CourseComponent implements OnInit {
     var nearCoursesCount = this.nearCourses.length;
     var courses;
     if (this.showLessPlus == false) {
-      if(this.timePlus == TimeEnum.old){
+      if (this.timePlus == TimeEnum.old) {
         return;
       }
       this.timePlus = TimeEnumHelper.next(this.timePlus);
       courses = this.getNearCourse(this.allCourses, this.timePlus, this.timeMinus);
-      if(nearCoursesCount == courses.length){
+      if (nearCoursesCount == courses.length) {
         this.moreCourse();
-        return;}
+        return;
+      }
       this.showLessPlus = true;
     }
     else {
@@ -67,14 +80,25 @@ export class CourseComponent implements OnInit {
   }
 
   calculateTraffic(course: Course) {
+    var connection = navigator.connection.type;
+    console.log(connection);
+    if(connection == "none"){
+      this.matSnackBar.open("Brak połączenia z siecią!", "", {
+        duration: 2000,
+      });
+      return;
+    }
     course.traficIsCalculate = true;
+    this.progressWidth = 1;
     this.traffic.calculateDurrationForStop(course, 0).then(data => {
       for (let i = 0; i < this.nearCourses.length; i++) {
         if (this.nearCourses[i].direction == course.direction && this.nearCourses[i].firstStop.timeString == course.firstStop.timeString)
           this.nearCourses[i] = course;
       }
+    }, error => {
+      course.traficIsCalculate = false;
+      this.progressWidth = 0;
     });
-
   }
 
   isFirstStop(course: Course, stop: Stop) {
@@ -121,7 +145,7 @@ export class CourseComponent implements OnInit {
   }
 
   calculateTime(stop: Stop) {
-    if(stop.time == null)
+    if (stop.time == null)
       return "";
     var now = new Date();
     var stopDate = new Date();
@@ -137,14 +161,21 @@ export class CourseComponent implements OnInit {
       return resultInMinutes.toString() + " min";
   }
 
-  coursesExist(){
-    if(this.nearCourses == undefined)
+  coursesExist() {
+    if (this.nearCourses == undefined)
       return false;
     var courseCount = this.nearCourses.length;
-    if(courseCount == 0){
+    if (courseCount == 0) {
       return false;
     }
     return true;
   }
 
+  showMap(course: Course) {
+    this.mapShowed.emit(course);
+  }
+
+  go(course: Course) {
+    this.coursSelected.emit(course);
+  }
 }

@@ -3,9 +3,11 @@ import { Stop } from "../models/Stop";
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs";
 import * as moment from "moment";
-import { } from '@types/googlemaps';
+import { } from 'googlemaps';
 import { Course } from "../models/Course";
 import { DirectionEnum } from "../helpers/DirectionEnum";
+import { EventService } from "./EventServices";
+import { ProgressUpdated } from "../events/ProgressUpdated";
 
 const httpOptions = {
     headers: new HttpHeaders({
@@ -15,31 +17,51 @@ const httpOptions = {
 };
 
 const stopNameInGoogle = {
-    "Kraków": "Wita+Stwosza+4",
-    "Wieliczka": ["Kraków+Plac+Inwalidów,+30-001+Kraków", "Tesco,+Wielicka+259,+30-663+Kraków", "Galeria+NaCl,+Marszałka+Józefa+Piłsudskiego+73,+32-020+Wieliczka"],
-    "Gdów": "Gdów,+32-420",
-    "Łapanów": "Łapanów",
-    "Trzciana": "Trzciana",
-    "Żegocina": "Żegocina,+32-731",
-    "Rybie": "Stare+Rybie,+34-652",
-    "Szyk": "Krasne-Lasocice",
-    "Laskowa": "Laskowa, 34-602",
-    "Limanowa": "Limanowa+Ul.+Z.+Augusta"
+    "Kraków": "50.069440, 19.949613",
+    "Plac inw.": "50.068904, 19.925932",
+    "Mateczne": "50.035941, 19.941330",
+    "Bonarka":"50.028882,19.956833",
+    "Bieżanów": "50.013463, 20.000331",
+    "Wieliczka": "49.987269, 20.065606",
+    "Gdów": "49.908338, 20.198642",
+    "Łapanów": "49.864574, 20.291420",
+    "Trzciana": "49.845080336168024,20.36998420142902",
+    "Żegocina": "49.813078229059876,20.420235993276265",
+    "Rybie": "49.80746441820928,20.314879417419434",
+    "Szyk": "49.789475919461815, 20.29715087385739",
+    "Laskowa": "49.76163501912453, 20.45033758454099",
+    "Lasocice":"49.811551, 20.230321",
+    "Jodłownik":"49.772098, 20.232453",
+    "Tymbark": "49.730311, 20.324225",
+    "Limanowa": "49.699823079791976, 20.419726967811584"
 }
 
 @Injectable()
 export class TraficService {
 
-
-    constructor(public http: HttpClient) {
+    oldTimeTo;
+    constructor(public http: HttpClient, public eventService: EventService) {
     }
 
     apiLink = "https://maps.googleapis.com/maps/api/directions/json?origin=";
     key = "AIzaSyCKaopCdrGph_N28D9vVRrPsxRnNMqeUMU";
 
+    getTimeAndDistance(lat: any, lng: any, toStop: string,travel?:google.maps.TravelMode) {
+        return new Promise<any>((resolve, reject) =>{
+            var time = new Date();
+            time.setHours(time.getHours() + (Math.floor(Math.random() * 6) + 1))         
+            var start = new google.maps.LatLng(lat, lng);
+            this.getDirection(start, stopNameInGoogle[toStop], time,travel).then(data => {
+                resolve(data);
+            },error =>{
+                reject();
+            });
+        })
+    }
+
     calculateDurrationForStop(cours: Course, i) {
         return new Promise((resolve, reject) => {
-            i
+            this.eventService.sendEvent(ProgressUpdated, new ProgressUpdated(this.calculateProgress(cours, i)));
             if (cours.stops[i + 1] == null || cours.stops[i + 1] == undefined)
                 resolve();
 
@@ -50,67 +72,36 @@ export class TraficService {
             time.setHours(stop.time.hours);
             time.setMinutes(stop.time.minutes);
 
-            if(time < new Date())
+            if (time < new Date())
                 resolve();
-                
+
             var timeTo = new Date();
             timeTo.setHours(nextStop.time.hours);
             timeTo.setMinutes(nextStop.time.minutes);
-
-            if (stop.city === "Kraków" &&
-                (cours.direction == DirectionEnum.KRL.toString()
-                    || cours.direction == DirectionEnum.KSL.toString()
-                    || cours.direction == DirectionEnum.KZL.toString())) {
-
-                this.calculateToKrakowWieliczka(time).then(resolve1 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve1);
-                    this.calculateDurrationForStop(cours, i + 1).then(end1 => {
+            this.oldTimeTo = moment(timeTo);
+            this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city], time).then(resolve5 => {
+                this.calculateTime(nextStop, time, timeTo, resolve5);
+                this.calculateDurrationForStop(cours, i + 1).then(end => {
                         resolve();
-                    });
+                }, error => {
+                    reject();
                 });
-            }
-            else if (stop.city === "Wieliczka" && (
-                cours.direction == DirectionEnum.LRK.toString()
-                || cours.direction == DirectionEnum.LSK.toString()
-                || cours.direction == DirectionEnum.LZK.toString()
-            )) {
-                this.calculateToWieliczkaKrakow(time).then(resolve2 => {
-                    this.calculateTime(nextStop, time,timeTo, resolve2);
-                    this.calculateDurrationForStop(cours, i + 1).then(end2 =>{
-                        resolve();
-                    });
-                });
-            }
-            else if(stop.city === "Gdów" && nextStop.city === "Wieliczka") {
-                this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city][2], time).then(resolve3 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve3);
-                    this.calculateDurrationForStop(cours, i + 1).then(end3=>{
-                        resolve();
-                    });
-                });
-            }
-            else if(stop.city === "Wieliczka" && nextStop.city === "Gdów") {
-                this.send(stopNameInGoogle[stop.city][2], stopNameInGoogle[nextStop.city], time).then(resolve4 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve4);
-                    this.calculateDurrationForStop(cours, i + 1).then(end4=>{
-                        resolve();
-                    });
-                });
-            }
-            else {
-                this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city], time).then(resolve5 => {
-                    this.calculateTime(nextStop, time, timeTo, resolve5);
-                    this.calculateDurrationForStop(cours, i + 1).then(end5=>{
-                        resolve();
-                    });
-                });
-            }
-
+            }, error => {
+                reject();
+            });
         });
+    }
 
+    calculateProgress(cours: Course, i) {
+        var coursLength = cours.stops.length - 1;
+        var k = i / coursLength;
+        var z = k * 100;
+        return z
     }
 
     calculateTime(nextStop: Stop, timeFrom, timeTo, durationInTraffic) {
+        if(durationInTraffic == null)
+            durationInTraffic = this.oldTimeTo.diff(timeFrom,"seconds");
         
         var timeMz = moment(timeFrom).add((durationInTraffic), "seconds");
         var dateNew = timeMz.toDate();
@@ -118,7 +109,7 @@ export class TraficService {
         nextStop.time.hours = dateNew.getHours()
         nextStop.time.minutes = dateNew.getMinutes();
 
-        nextStop.timeString = this.pad(nextStop.time.hours.toString(), 2) + ":" + this.pad(nextStop.time.minutes.toString(),2);
+        nextStop.timeString = this.pad(nextStop.time.hours.toString(), 2) + ":" + this.pad(nextStop.time.minutes.toString(), 2);
     }
 
     send(start, end, time) {
@@ -134,6 +125,12 @@ export class TraficService {
                 }
 
             }, data => {
+                if (data == null) {
+                    resolve(null);
+                    console.log(start);
+                    console.log(end);
+                    console.log(time);
+                }
                 var duration = data.routes["0"].legs["0"].duration_in_traffic.value;
                 resolve(duration);
             });
@@ -141,44 +138,35 @@ export class TraficService {
 
     }
 
-    calculateToKrakowWieliczka(time) {
+    getDirection(start, end, time, travel?:google.maps.TravelMode) {
+        if(!travel)
+            travel = google.maps.TravelMode.DRIVING;
         return new Promise((resolve, reject) => {
-            var first;
-            var secoud;
-            var third;
-            this.send(stopNameInGoogle.Kraków, stopNameInGoogle.Wieliczka[0], time).then(data => {
-                first = data;
-                this.send(stopNameInGoogle.Wieliczka[0], stopNameInGoogle.Wieliczka[1], time).then(data => {
-                    secoud = first + data;
-                    this.send(stopNameInGoogle.Wieliczka[1], stopNameInGoogle.Wieliczka[2], time).then(data => {
-                        third = secoud + data;
-                        resolve(third);
-                    });
-                });
-            });
-        });
-    }
+            var directionsService = new google.maps.DirectionsService;
+            directionsService.route({
+                origin: start,
+                destination: end,
+                travelMode: travel,
+                drivingOptions: {
+                    departureTime: time,
+                    trafficModel: google.maps.TrafficModel.BEST_GUESS
+                }
 
-    calculateToWieliczkaKrakow(time) {
-        return new Promise((resolve, reject) => {
-            var first;
-            var secoud;
-            var third;
-            this.send(stopNameInGoogle.Wieliczka[2], stopNameInGoogle.Wieliczka[1], time).then(data => {
-                first = data;
-                this.send(stopNameInGoogle.Wieliczka[1], stopNameInGoogle.Wieliczka[0], time).then(data => {
-                    secoud = first + data;
-                    this.send(stopNameInGoogle.Wieliczka[0], stopNameInGoogle.Kraków, time).then(data => {
-                        third = secoud + data;
-                        resolve(third);
-                    });
-                });
+            }, data => {
+                if (data == null) {
+                    reject();
+                }
+                else{
+                resolve(data);
+                console.log(data);
+                }
             });
         });
+
     }
 
     pad(num, size) {
-        var s = num+"";
+        var s = num + "";
         while (s.length < size) s = "0" + s;
         return s;
     }

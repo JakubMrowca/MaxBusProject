@@ -5,8 +5,7 @@
     height: 80%!important;
 }
 body{
-height: 100%!important;
-margin-top: 55px!important;
+margin-top: 35px!important;
 }
 html{
     height: 100%!important;
@@ -19,4 +18,10 @@ html{
     position: fixed;
     top: 0px;
     z-index: 1300;
+    height: 35px
+}
+.progressInfo{
+    text-align: center;
+    margin: 5px;
+   color:#5255e0;
 }

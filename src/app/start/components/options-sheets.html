@@ -1,0 +1,17 @@
+<mat-nav-list>
+<mat-list>
+        <div style="text-align:center">
+        <mat-list-item (click)="calculateTrafic()">Uwzglednij korki <div style="flex:1"></div><i style="color:#5255e0!important" class="material-icons">
+                alarm
+                </i></mat-list-item>
+        <mat-list-item (click)="ride()">Jedź<div style="flex:1"></div><i style="color:#5255e0!important" class="material-icons">
+                directions_bus
+                </i></mat-list-item>
+        <mat-list-item (click)="refresh()">Odśwież  <div style="flex:1"></div><i style="color:#5255e0!important" class="material-icons">
+                cached
+                </i> </mat-list-item>
+    </div>
+</mat-list>
+<hr>
+<span style="color:#5255e0!important;font-size: 16px;margin-left:10px">{{message}}</span>
+</mat-nav-list>

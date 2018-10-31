@@ -13,14 +13,14 @@ import { List } from 'linqts';
 import { TimetableUpdated } from "../events/TimetableUpdated";
 import { TimetableBuilderHelper } from "../helpers/TimetableBuilderHelper";
 import { TimetableVersionChanged } from "../events/TimetableVersionChanged";
+import { ProgressInfo } from "../events/ProgressInfo";
 
 @Injectable()
 export class TimetableUpdateService {
-    subscription: Subscription;
     repoLink: string = "https://raw.githubusercontent.com/metinowy15/MaksBusApi/master/data.json";
 
-    constructor(private appVersionEvent: AppVersionUpdated, private timetableVersionEvent: TimetableVersionChanged,private timetableEvent: TimetableUpdated,private localDb: LocalStorageHelper) {
-        this.subscription = this.appVersionEvent.getMessage().subscribe(message => {
+    constructor( private enevtServ:EventService,private localDb: LocalStorageHelper) {
+        this.enevtServ.getMessage<AppVersionUpdated>(AppVersionUpdated).subscribe(message => {
             this.checkTimetableVersion(message.timetableVersion)
         });
     }
@@ -28,11 +28,11 @@ export class TimetableUpdateService {
     checkTimetableVersion(timeTableVersion: number) {
         var lastVersion = this.localDb.getTimetableVersion();
         if (timeTableVersion > lastVersion) {
-            this.timetableVersionEvent.sendEvent();
+            this.enevtServ.sendEvent(ProgressInfo, new ProgressInfo("Aktualizacja rozkładu jazdy"))
+            this.enevtServ.sendEvent(TimetableVersionChanged);
             this.localDb.saveTimetableVersion(timeTableVersion);
             this.updateTimetable();
         }
-
     }
 
     getTimetable(): List<Course> {
@@ -46,10 +46,14 @@ export class TimetableUpdateService {
             format: "json"
         }).done(function (data) {
             var timetable = TimetableBuilderHelper.buildTimetableFromJson(data);
+            console.log(timetable);
             that.localDb.saveTimetable(timetable.ToArray());
-            that.timetableEvent.timetable = timetable;
+            var timetableEvent = new TimetableUpdated();
+            timetableEvent.timetable = timetable;
             console.log("updateTimetable");
-            that.timetableEvent.sendEvent();
+            that.enevtServ.sendEvent(ProgressInfo, new ProgressInfo("Rozkład jazdy zaaktualizowany"))
+
+            that.enevtServ.sendEvent(TimetableUpdated, timetableEvent);
         });
     }
 }

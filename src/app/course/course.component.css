@@ -32,7 +32,9 @@
     color: #5255e0!important;
     font-weight: bold;
 }
-
+.telesforColor{
+    background-color: #984444!important;
+}
 @keyframes MyAnimation {
     0% {
 
@@ -68,4 +70,7 @@
   .more-less-text span{
     position: relative;
     top: -7px;
+  }
+  .blue-button{
+      background-color: #5255e0;
   }
