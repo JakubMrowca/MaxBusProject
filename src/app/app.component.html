@@ -15,8 +15,7 @@
 </mat-toolbar>
 <div *ngIf="!locationIsDetected || !timetableIsActual" class="spinner-center">
     <mat-spinner></mat-spinner>
-
-    
+  
 </div>
 <div *ngIf="!locationIsDetected || !timetableIsActual" class="progressInfo">{{progressInfo}}</div>
 <div *ngIf="locationIsDetected && timetableIsActual">
