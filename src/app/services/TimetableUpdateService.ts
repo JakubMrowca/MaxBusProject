@@ -13,6 +13,7 @@ import { List } from 'linqts';
 import { TimetableUpdated } from "../events/TimetableUpdated";
 import { TimetableBuilderHelper } from "../helpers/TimetableBuilderHelper";
 import { TimetableVersionChanged } from "../events/TimetableVersionChanged";
+import { ProgressInfo } from "../events/ProgressInfo";
 
 @Injectable()
 export class TimetableUpdateService {
@@ -27,6 +28,7 @@ export class TimetableUpdateService {
     checkTimetableVersion(timeTableVersion: number) {
         var lastVersion = this.localDb.getTimetableVersion();
         if (timeTableVersion > lastVersion) {
+            this.enevtServ.sendEvent(ProgressInfo, new ProgressInfo("Aktualizacja rozkładu jazdy"))
             this.enevtServ.sendEvent(TimetableVersionChanged);
             this.localDb.saveTimetableVersion(timeTableVersion);
             this.updateTimetable();
@@ -49,6 +51,8 @@ export class TimetableUpdateService {
             var timetableEvent = new TimetableUpdated();
             timetableEvent.timetable = timetable;
             console.log("updateTimetable");
+            that.enevtServ.sendEvent(ProgressInfo, new ProgressInfo("Rozkład jazdy zaaktualizowany"))
+
             that.enevtServ.sendEvent(TimetableUpdated, timetableEvent);
         });
     }

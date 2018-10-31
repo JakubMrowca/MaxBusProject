@@ -17,6 +17,7 @@ export class AppState{
     direction:string;
     watchCourse:Course;
     currentLocation:string;
+    noLocation = false;
     yourCord = {
         lat:0,
         lng:0

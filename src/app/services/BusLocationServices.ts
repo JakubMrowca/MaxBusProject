@@ -17,11 +17,11 @@ export class BusLocationServices {
     }
 
     getLocation(data): Observable<any>{
-        return this.http.post<void>("http://solidarnosclukowica.pl/MaxBus/getLocation.php",data,httpOptions)
+        return this.http.post<void>("https://solidarnosclukowica.pl/MaxBus/getLocation.php",data,httpOptions)
     }
 
     insertLocation(command:any): Observable<void>{
-        return this.http.post<void>("http://solidarnosclukowica.pl/MaxBus/insertLocation.php",command,httpOptions)
+        return this.http.post<void>("https://solidarnosclukowica.pl/MaxBus/insertLocation.php",command,httpOptions)
     }
 
 }

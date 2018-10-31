@@ -29,10 +29,11 @@
         <div *ngIf="!searchEnd">Wybierz kierunek
           <div style="color:white">(LIM - do Limanowej, KRK - w strone Krakowa)</div>
           <div>oraz sposób dotarcia na przystanek</div>
+          <div>Wymagana jest lokalizacja oraz połączenie z internetem</div>
         </div>
         <div *ngIf="searchEnd">
           <div>Czas dojścia na przystanek: <span style="color:white">{{nearStop.data.duration.text}}</span></div>
-          <div style="height:35px">Maxbus będzie o <span style="color:white" class='time'>{{nearCourse.firstStop.timeString}}</span></div>
+          <div style="height:35px">Bus będzie o <span style="color:white" class='time'>{{nearCourse.firstStop.timeString}}</span></div>
           <div>na przystanku <span style="color:white" class='place'>{{nearStop.city}}</span></div>
           <div><span style="color:white;font-size: 13px">{{resolveDirection()}}</span></div>
         </div>

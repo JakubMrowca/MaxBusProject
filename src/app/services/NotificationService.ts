@@ -7,6 +7,7 @@ import { EventService } from './EventServices';
 import { AppVersionUpdated } from '../events/AppVersionUpdated';
 import { TagPlaceholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { NoInternet } from '../events/NoInternet';
+import { ProgressInfo } from '../events/ProgressInfo';
 declare let navigator: any;
 @Injectable()
 export class NotificationService {
@@ -20,11 +21,15 @@ export class NotificationService {
     updateNotification() {
         var connection = navigator.connection.type;
         console.log(connection);
+        this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nawiązywanie połączenia z internetem"));
+
         if(connection == "none"){
             console.log("notOnline");
+            this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Brak połączenia"));
             this.eventService.sendEvent(NoInternet);
         }
         else {
+            this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Sprawdzanie aktualizacji"));
             var that = this;
             $.getJSON(this.notificationLink, {
                 format: "json"
@@ -45,11 +50,13 @@ export class NotificationService {
                     appVersionEvent.schoolFreeDayTo = notification.schoolDayFreeTo;
                     appVersionEvent.message = notification.message;
                     console.log("appVersion change");
+                    that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nowa wersja aplikacji:"+ notification.appVersion.toString()));
                     that.eventService.sendEvent(AppVersionUpdated, appVersionEvent);
                 }
                 else {
                     console.log("Not app version changes")
                     that.eventService.sendEvent(NoInternet);
+                    that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Rozkład jazdy aktualny"));
                 }
             });
         }

@@ -20,3 +20,8 @@ html{
     z-index: 1300;
     height: 35px
 }
+.progressInfo{
+    text-align: center;
+    margin: 5px;
+   color:#5255e0;
+}

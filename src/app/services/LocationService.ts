@@ -6,6 +6,7 @@ import { EventService } from "./EventServices";
 import { LocationChanged } from "../events/LocationChanged";
 import { LatAndLngChanged } from "../events/LatAndLngChanged";
 import { Course } from "../models/Course";
+import { ProgressInfo } from "../events/ProgressInfo";
 declare let cordova: any;
 @Injectable()
 export class LocationService {
@@ -164,9 +165,10 @@ export class LocationService {
     getLocationForLatAndLeng() {
         var that = this;
         var options = { enableHighAccuracy: true };
-
         console.log("location");
+        try{
         var watchId = navigator.geolocation.getCurrentPosition(data => {
+       
             console.log("user allow location");
             var locationEvent = new LocationDetected();
             locationEvent.currentLocation = null;
@@ -183,13 +185,21 @@ export class LocationService {
                     break;
                 }
             }
+            that.appState.noLocation = false;
             that.eventService.sendEvent(LocationDetected, locationEvent);
         }, error => {
+            that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nie można znaleźć lokalizacji"));
             console.log("user not allow location");
             var locationEvent = new LocationDetected()
             locationEvent.currentLocation = null;
             that.eventService.sendEvent(LocationDetected, locationEvent);
         }, options);
+        }catch{
+            that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nie można znaleźć lokalizacji"));
+            var locationEvent = new LocationDetected()
+            locationEvent.currentLocation = null;
+            that.eventService.sendEvent(LocationDetected, locationEvent);
+        }
     }
 
     startWatchPosition() {

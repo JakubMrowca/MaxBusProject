@@ -7,6 +7,7 @@ import { CoursesFiltered } from "./events/CoursesFiltered";
 import { ProgressUpdated } from "./events/ProgressUpdated";
 import { LocationChanged } from "./events/LocationChanged";
 import { LatAndLngChanged } from "./events/LatAndLngChanged";
+import { ProgressInfo } from "./events/ProgressInfo";
 
 export const EVENTS = [
     NoInternet,
@@ -18,4 +19,5 @@ export const EVENTS = [
     ProgressUpdated,
     LocationChanged,
     LatAndLngChanged,
+    ProgressInfo
   ];

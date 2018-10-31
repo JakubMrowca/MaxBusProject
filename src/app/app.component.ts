@@ -16,6 +16,7 @@ import { NoInternet } from './events/NoInternet';
 import { AppVersionUpdated } from './events/AppVersionUpdated';
 import { EventService } from './services/EventServices';
 import { MatSnackBar } from '@angular/material';
+import { ProgressInfo } from './events/ProgressInfo';
 declare let navigator: any;
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ export class AppComponent {
   krkCourses: List<Course>;
   allCourses: List<Course>;
   direction: string;
+  progressInfo:string = "Uruchamianie aplikacji";
   calculatingDuration = false;
   timetableIsActual = false;
   locationIsDetected = false;
@@ -35,11 +37,12 @@ export class AppComponent {
   constructor(private appState: AppState, public snackBar: MatSnackBar, public zone: NgZone, private router: Router, public notService: NotificationService,
     public timetableService: TimetableUpdateService, public locationService: LocationService,
     private legendService: LegendService, public eventService: EventService) {
-
+    
     this.eventSubscriptionInit();
     var that = this;
     document.addEventListener('deviceready', () => {
     console.log("deviceIsReady");
+    that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Uruchamianie aplikacji"))
     that.notService.updateNotification();
     });
 
@@ -70,12 +73,17 @@ export class AppComponent {
           this.router.navigate(["courses"]);
         }
         else {
+          this.appState.noLocation = false;
+          this.eventService.sendEvent(ProgressInfo,new ProgressInfo("Znaleźono lokalizacje użytkownika:"+ message.currentLocation));
           this.appState.direction = this.locationService.getDirection();
           this.router.navigate(["start"]);
         }
       })
 
     });
+    this.eventService.getMessage<ProgressInfo>(ProgressInfo).subscribe(message =>{
+      this.progressInfo = message.message;
+    })
 
     this.eventService.getMessage<NoInternet>(NoInternet).subscribe(message => {
       console.log("NoInternet catch or app no change");
@@ -95,41 +103,44 @@ export class AppComponent {
       this.snackBar.open("Brak połączenia z siecią!", "", {
         duration: 2000,
       });
-    }
-    navigator.permissions.query({ 'name': 'geolocation' })
-      .then(permission => {
+    }else{
+            this.router.navigate(["start"]);
+          }
+    // navigator.permissions.query({ 'name': 'geolocation' })
+    //   .then(permission => {
 
-        if (permission.state == "denied"){
-          this.snackBar.open("Udostpnij lokalizacje!", "", {
-            duration: 2000,
-          });
-        }else{
-          this.router.navigate(["start"]);
-        }
-      }
-      )
-    this.locationService.locationIsEnabled().then(data => {
-      this.zone.run(() => {
-        if (data == true)
-          this.router.navigate(["start"]);
-        else {
-          this.snackBar.open("Udostpnij lokalizacje!", "", {
-            duration: 2000,
-          });
-        }
-      })
-    });
-  }
+    //     if (permission.state == "denied"){
+    //       this.snackBar.open("Udostpnij lokalizacje!", "", {
+    //         duration: 2000,
+    //       });
+    //     }
+    //   }
+    //   )
+    }
 
   afterNotificationUpdate() {
     this.setTimetable();
     this.timetableIsActual = true;
     var that = this;
+    that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Sprawdzanie lokalizacji"));
     this.locationService.locationIsEnabled().then(data => {
       this.zone.run(() => {
-        if (data == true)
+        if (data == true){
+          that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Sprawdzanie lokalizacji"));
           this.locationService.getLocationForLatAndLeng();
+          let i = 1;
+          setTimeout(() => {
+            if(this.locationIsDetected != true){
+            that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Nie można znaleźć lokalizacji, poczekaj"));
+            var locationEvent = new LocationDetected()
+            locationEvent.currentLocation = null;
+            that.appState.noLocation = true;
+            that.eventService.sendEvent(LocationDetected, locationEvent);
+          }
+        }, 6000);
+        }
         else {
+          that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Brak lokalizcji"));
           this.locationIsDetected = true;
           console.log("location is disable")
           this.router.navigate(["courses"]);
