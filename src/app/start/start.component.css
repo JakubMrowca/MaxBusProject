@@ -139,3 +139,20 @@ h2 span {
     flex-direction: column;
     flex: 1;
 }
+
+.subTolbar{
+    text-align: center;
+
+}
+.subTolbar button{
+    min-width: 10px!important;
+    margin-left: 10px;
+}
+
+.activeDirection{
+    color: #c73d3d;
+}
+
+:host /deep/ .mat-figure{
+    flex-direction: column;
+}

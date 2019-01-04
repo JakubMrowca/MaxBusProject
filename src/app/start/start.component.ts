@@ -18,6 +18,7 @@ import { ProgressUpdated } from '../events/ProgressUpdated';
 import { initDomAdapter } from '../../../node_modules/@angular/platform-browser/src/browser';
 import { BusLocationServices } from '../services/BusLocationServices';
 import { OptionsSheets } from './components/options-sheets.component';
+import { Stop } from '../models/Stop';
 const secondsCounter = interval(15000);
 
 @Component({
@@ -35,7 +36,7 @@ export class StartComponent implements OnInit {
   message: Message;
   appVersion: number;
   interval: any;
-
+  active = 'walk';
   nearStop = undefined;
   prommises = [];
   distances = [];
@@ -45,13 +46,19 @@ export class StartComponent implements OnInit {
   nearCourse: Course;
   searchEnd = false;
   nearCourses: List<Course>;
+  displayCourses: Array<Course>;
+  yourMarker;
+  directionsDisplay;
+
   courseSkip = 0;
   bounds;
   map;
+  directions = [{ value: 'krk', viewValue: 'Do Krakowa' },
+  { value: 'lim', viewValue: 'Do Limanowej' }];
 
   subscription: Subscription;
   location: string;
-  constructor(private appState: AppState,public snackBar: MatSnackBar, public traficService: TraficService, public busLocation: BusLocationServices, public zone: NgZone, private bottomSheet: MatBottomSheet, private notService: NotificationService, private eventServ: EventService, private locationService: LocationService) {
+  constructor(private appState: AppState, public snackBar: MatSnackBar, public traficService: TraficService, public busLocation: BusLocationServices, public zone: NgZone, private bottomSheet: MatBottomSheet, private notService: NotificationService, private eventServ: EventService, private locationService: LocationService) {
     this.allCourses = this.appState.allCourses;
     this.travelModeEnum = google.maps.TravelMode.WALKING;
     this.eventServ.getMessage<LocationDetected>(LocationDetected).subscribe(message => {
@@ -77,11 +84,15 @@ export class StartComponent implements OnInit {
   searchCourse() {
     this.courseSkip = 0;
     this.progressWidth = 1;
+    this.yourMarker = null;
     this.searchRecuretion(0);
   }
 
   searchRecuretion(index: number) {
     var stops = this.locationService.stopsLatAndLng;
+    if(this.direction == "Lim")
+      stops = this.locationService.getReverseStops();
+
     var coursLength = stops.length - 1;
     var k = index / coursLength;
     var z = k * 100;
@@ -130,7 +141,24 @@ export class StartComponent implements OnInit {
     console.log(this.nearStop);
   }
 
-  calculateTrafic(){
+  calculateTimeString(stop: Stop) {
+    if (stop.time == null)
+      return "";
+    var now = new Date();
+    var stopDate = new Date();
+    stopDate.setHours(stop.time.hours);
+    stopDate.setMinutes(stop.time.minutes);
+    var difference = stopDate.getTime() - now.getTime();
+    var resultInMinutes = Math.round(difference / 60000);
+    if (resultInMinutes >= 60) {
+      var hourResult = Number.parseInt((resultInMinutes / 60).toString());
+      var minResult = resultInMinutes % 60;
+      return hourResult.toString() + " h " + minResult.toString() + " min"
+    } else
+      return resultInMinutes.toString() + " min";
+  }
+
+  calculateTrafic() {
     var that = this;
     this.nearCourse.traficIsCalculate = true;
     this.progressWidth = 1;
@@ -142,17 +170,17 @@ export class StartComponent implements OnInit {
     });
   }
 
-  showOptions(){
-    this.bottomSheet.open(OptionsSheets, {data:this.message.text}).afterDismissed().subscribe(result =>{
-        if(result == "calculateTrafic" && this.nearCourse.traficIsCalculate != true){
-          this.calculateTrafic();
-        }
-        if(result == "ride"){
-          this.go();
-        }
-        if(result == "refresh"){
-          this.getCourseForDirection(true);
-        }
+  showOptions() {
+    this.bottomSheet.open(OptionsSheets, { data: this.message.text }).afterDismissed().subscribe(result => {
+      if (result == "calculateTrafic" && this.nearCourse.traficIsCalculate != true) {
+        this.calculateTrafic();
+      }
+      if (result == "ride") {
+        this.go();
+      }
+      if (result == "refresh") {
+        this.getCourseForDirection(true);
+      }
     });
   }
 
@@ -168,35 +196,28 @@ export class StartComponent implements OnInit {
       this.searchNearCourse(minPlus + 10);
     }
     if (course) {
+      this.searchEnd = true;
+      this.displayCourses = this.nearCourses.ToArray();
       this.initMap(course);
     }
   }
 
   initMap(course: Course) {
     this.nearCourse = course;
-    this.searchEnd = true;
-    var directionsDisplay = new google.maps.DirectionsRenderer();
+    if(this.directionsDisplay != undefined)
+      this.directionsDisplay.setMap(null);
+    this.directionsDisplay = new google.maps.DirectionsRenderer();
     var origin = new google.maps.LatLng(this.appState.yourCord.lat, this.appState.yourCord.lng);
     var nearStopLatLng = this.locationService.getLatLngForStop(this.nearCourse.firstStop);
-    this.map = new google.maps.Map(document.getElementById('mapStart'), {
-      zoom: 11,
-      center: nearStopLatLng,
-      zoomControl: false,
-      mapTypeControl: false,
-      scaleControl: false,
-      streetViewControl: false,
-      rotateControl: false,
-      fullscreenControl: false
-    });
-
+    this.map.center = nearStopLatLng;
     this.bounds = new google.maps.LatLngBounds();
     this.bounds.extend(origin);
     this.bounds.extend(nearStopLatLng);
     this.map.fitBounds(this.bounds);
-    directionsDisplay.setDirections(this.nearStop.response);
-    directionsDisplay.setMap(this.map);
-    this.addMarkersForCourse(this.map)
-    this.addBusMarker(this.map);
+    this.directionsDisplay.setDirections(this.nearStop.response);
+    this.directionsDisplay.setMap(this.map);
+    // this.addMarkersForCourse(this.map)
+    // this.addBusMarker(this.map);
   }
 
   addMarkersForCourse(map: google.maps.Map) {
@@ -290,15 +311,32 @@ export class StartComponent implements OnInit {
 
   ngOnInit() {
     this.interval = secondsCounter.subscribe(n => {
-          this.locationService.startWatchPosition();
-          //  if(this.watchCourse == undefined && this.nearCourse != undefined)
-          //    this.initMap(this.nearCourse);
+      this.locationService.startWatchPosition();
+      //  if(this.watchCourse == undefined && this.nearCourse != undefined)
+      //    this.initMap(this.nearCourse);
     });
     console.log("start");
     this.getCourseForDirection(false);
     this.appVersion = this.notService.getAppVersion();
     this.message = this.notService.getMessage();
     this.hideNotification = !this.message.unread;
+
+    var origin = new google.maps.LatLng(this.appState.yourCord.lat, this.appState.yourCord.lng);
+    this.map = new google.maps.Map(document.getElementById('mapStart'), {
+      zoom: 11,
+      center: origin,
+      zoomControl: false,
+      mapTypeControl: false,
+      scaleControl: false,
+      streetViewControl: false,
+      rotateControl: false,
+      fullscreenControl: false
+    });
+    this.yourMarker = new google.maps.Marker(
+      {
+        position: origin,
+        map: this.map
+      });
   }
 
   ngOnDestroy(): void {
@@ -325,14 +363,14 @@ export class StartComponent implements OnInit {
   }
 
   go() {
-    
-    if(this.checkDate()){
+
+    if (this.checkDate()) {
       this.snackBar.open("Bus jeszcze nie wyjechał!", "", {
         duration: 2000,
       });
       return;
     }
-    if(this.nearStop.data.distance.value > 2000){
+    if (this.nearStop.data.distance.value > 2000) {
       this.snackBar.open("Jesteś za daleko!", "", {
         duration: 2000,
       });
@@ -352,12 +390,12 @@ export class StartComponent implements OnInit {
     this.appState.saveWatchCourse();
   }
 
-  checkDate(){
+  checkDate() {
     var now = new Date();
     var coursDate = new Date();
     coursDate.setHours(this.nearCourse.stops[0].time.hours);
     coursDate.setMinutes(this.nearCourse.stops[0].time.minutes);
-    if(now < coursDate)
+    if (now < coursDate)
       return false;
     return true;
   }

@@ -63,9 +63,10 @@
   }
 
   .more-less-text{
-      color: #5255e0;
+      color: #e57373;
       width: 100%;
-      text-align: right
+      text-align: center;
+      font-family: Roboto, "Helvetica Neue", sans-serif;
   }
   .more-less-text span{
     position: relative;
@@ -74,3 +75,6 @@
   .blue-button{
       background-color: #5255e0;
   }
+  :host /deep/ .mat-figure{
+    flex-direction: column;
+}

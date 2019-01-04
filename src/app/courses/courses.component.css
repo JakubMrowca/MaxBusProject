@@ -1,4 +1,21 @@
 .herb{
-    width: 40px;height: 55px;
+    width: 70px;height: 85px;
     margin: 0 auto;
+    opacity: 0.8;
+}
+div{
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+:host /deep/ .timepicker__header{
+    background-color: #e57373!important;
+}
+
+:host /deep/ .timepicker-button{
+    color: #e57373!important;
+}
+.subTolbar button{
+ margin-left: 10px;
+}
+.subTolbar i{
+    margin-right: 5px;
 }

@@ -1,0 +1,50 @@
+   <mat-card style="padding: 0px;margin:3px">
+    <div id="mapStart" style="height:300px" class="row content flex-map"></div>
+    <mat-grid-list *ngIf="searchEnd" cols="2" rowHeight="3:1">
+  
+      <mat-grid-tile style="flex-direction:column">
+        {{nearStop.city}}
+        <p style="margin:2px;font-size: 12px;color: grey">Najbliższy przystanek</p>
+      </mat-grid-tile>
+      <mat-grid-tile style="flex-direction:column">
+        {{nearStop.data.duration.text}}
+        <p style="margin:2px;font-size: 12px;color: grey">Czas dojścia</p>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-grid-list *ngIf="!searchEnd" cols="1" rowHeight="3:1">
+  
+      <mat-grid-tile style="flex-direction:column">
+        Znajdź odjazdy z najbliższego przystanku
+        <p style="margin:2px;font-size: 12px;color: grey">określ kierunek i sposób dotarcia</p>
+      </mat-grid-tile>
+    </mat-grid-list>
+  
+  </mat-card>
+  <div *ngIf="progressWidth > 0 && progressWidth < 100">
+    <mat-progress-bar color="warn" mode="determinate" value="{{progressWidth}}"></mat-progress-bar>
+  </div>
+  <div *ngIf="searchEnd">
+    <h3 style="text-align: center;font-family: Roboto, 'Helvetica Neue', sans-serif;">Odjazdy z <span style="color:#e57373">{{nearStop.city}}
+      </span></h3>
+    <div *ngFor="let course of displayCourses">
+      <mat-card style="padding: 5px;margin:3px">
+        <mat-grid-list cols="3" rowHeight="3:1">
+  
+          <mat-grid-tile style="flex-direction:column-reverse">
+            {{course.direction}}
+            <p style="margin:2px;font-size: 12px;color: grey">Kierunek</p>
+          </mat-grid-tile>
+          <mat-grid-tile style="flex-direction:column">
+            {{course.firstStop.timeString}}
+            <p style="margin:2px;font-size: 12px;color: grey">Odjazd</p>
+          </mat-grid-tile>
+          <mat-grid-tile style="flex-direction:column;color:#e57373">
+            {{calculateTimeString(course.firstStop)}}
+            <p style="margin:2px;font-size: 12px;color: grey">Za</p>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-card>
+    </div>
+  </div>
+  
+  

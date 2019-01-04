@@ -31,6 +31,7 @@
     "jquery": "^3.3.1",
     "linqts": "^1.11.0",
     "moment": "^2.22.2",
+    "ngx-material-timepicker": "^2.11.1",
     "rxjs": "^6.0.0",
     "web-animations-js": "^2.3.1",
     "zone.js": "^0.8.26"

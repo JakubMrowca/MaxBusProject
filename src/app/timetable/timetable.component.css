@@ -54,3 +54,6 @@ display: none!important;
     float:right;
     margin-top: 4px;
 }
+:host /deep/ .mat-figure{
+    flex-direction: column;
+}

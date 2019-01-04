@@ -2,7 +2,7 @@ import { AppComponent } from './app.component';
 import { CourseComponent } from './course/course.component';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, SimpleChange } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -53,6 +53,7 @@ import { TraficService } from './services/TraficService';
 import { StartComponent } from './start/start.component';
 import { TimetableComponent } from './timetable/timetable.component';
 import { LegendService } from './services/LegendServices';
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { CoursesComponent } from './courses/courses.component';
 import {
   RouterModule,
@@ -66,17 +67,17 @@ import { MapSheet } from './start/components/mapSheet.component';
 import { watchedCourseComponent } from './start/components/watchedCourse.component';
 import { BusLocationServices } from './services/BusLocationServices';
 import { OptionsSheets } from './start/components/options-sheets.component';
+import { SingleCourseComponent } from './single-course/single-course.component';
 
 
 const path: Routes = [
   { path: '', redirectTo: "home", pathMatch: 'full' },
-  { path: "courses", component: CoursesComponent },
+  { path: "courses/:direction", component: CoursesComponent },
   { path: "start", component: StartComponent},
   { path: "timetable", component:TimetableComponent },
   { path: "home", component:HomeComponent }
   
 ];
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -88,7 +89,8 @@ const path: Routes = [
     HomeComponent,
     StopsSheets,
     OptionsSheets,
-    MapSheet
+    MapSheet,
+    SingleCourseComponent
 
   ],
   imports: [
@@ -96,6 +98,7 @@ const path: Routes = [
     BrowserModule,
     MatAutocompleteModule,
     MatBadgeModule,
+    [NgxMaterialTimepickerModule.forRoot()],
     MatBottomSheetModule,
     MatButtonModule,
     MatButtonToggleModule,

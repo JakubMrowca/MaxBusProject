@@ -1,55 +1,30 @@
-<mat-accordion>
+<div>
   <div *ngIf="!coursesExist()" style="width: 100%;text-align: center">
     <h3>Brak kursów</h3>
   </div>
   <div *ngIf="coursesExist()">
-    <mat-expansion-panel class='my-animation' [ngClass]="{'telesforColor': course.isTelesfor}" *ngFor="let course of nearCourses" style="margin-bottom: 10px">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <div style="margin: 0 auto">
-            {{course.direction}}
-          </div>
-        </mat-panel-title>
-        <mat-panel-description>
-          <div style="margin: 0 auto">
-            {{course.firstStop.timeString}}
-          </div>
-        </mat-panel-description>
-        <mat-panel-description>
-          <div class="colored-time" style="margin: 0 auto">
-            {{calculateTime(course.firstStop)}}
-          </div>
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <mat-grid-list cols="3" rowHeight="14:3">
-        <mat-grid-tile class="gridHeader">Przystanek</mat-grid-tile>
-        <mat-grid-tile class="gridHeader">Czas</mat-grid-tile>
-        <mat-grid-tile class="gridHeader">Za</mat-grid-tile>
-        <div *ngFor="let stop of course.stops">
-          <mat-grid-tile [ngClass]="{'first-stop' : isFirstStop(course,stop)}">{{stop.city}}</mat-grid-tile>
-          <mat-grid-tile [ngClass]="{'first-stop' : isFirstStop(course,stop)}">{{stop.timeString}}</mat-grid-tile>
-          <mat-grid-tile [ngClass]="{'first-stop' : isFirstStop(course,stop)}">{{calculateTime(stop)}}</mat-grid-tile>
-        </div>
-      </mat-grid-list>
-      <div style="height: 15px;">
-      <div *ngIf="progressWidth > 0 && progressWidth < 100">
-      <mat-progress-bar color="primary" mode="determinate" value="{{progressWidth}}"></mat-progress-bar>
+    <div *ngFor="let course of nearCourses">
+      <mat-card style="padding: 5px;margin:3px">
+        <mat-grid-list cols="3" rowHeight="3:1">
+
+          <mat-grid-tile style="flex-direction:column">
+            {{directionResolve(course.direction)}}
+            <p style="margin:2px;font-size: 12px;color: grey">Przez</p>
+          </mat-grid-tile>
+          <!-- <mat-grid-tile style="flex-direction:column-reverse">
+            Kraków
+            <p style="margin:2px;font-size: 12px;color: grey">Z</p>
+          </mat-grid-tile> -->
+          <mat-grid-tile style="flex-direction:column">
+            {{course.courseFirstStop.timeString}}
+            <p style="margin:2px;font-size: 12px;color: grey">Odjazd</p>
+          </mat-grid-tile>
+          <mat-grid-tile style="flex-direction:column;color:#e57373">
+            {{calculateTime(course.courseFirstStop)}}
+            <p style="margin:2px;font-size: 12px;color: grey">Za</p>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-card>
     </div>
   </div>
-      <div style="width: 100%;margin-top: 5px;text-align: center">
-        <button [disabled]="course.traficIsCalculate" (click)="calculateTraffic(course)" color="primary" mat-raised-button>Korki</button>
-        <button style="margin-left: 5px" *ngIf="isStart" (click)="showMap(course)" color="primary" mat-raised-button>Mapa</button>
-        <button style="margin-left: 5px" *ngIf="isStart" (click)="go(course)" class="blue-button" mat-raised-button>Jedź</button>
-      </div>
-    </mat-expansion-panel>
   </div>
-</mat-accordion>
-
-<div class="more-less-text">
-  <a (click)="moreCourse()">
-    <span>{{showLessPlus != true ? 'więcej' : 'mniej'}} </span>
-    <i style="margin-left: 2px" [ngClass]="{'rotate-animation' : showLessPlus, 'rotate-back-animation' : !showLessPlus}" class="material-icons">
-      keyboard_arrow_down
-    </i>
-  </a>
-</div>

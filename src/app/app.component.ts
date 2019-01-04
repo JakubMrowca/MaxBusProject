@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, ViewChild } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
 import { List } from 'linqts';
 import { Course } from './models/Course';
@@ -17,6 +17,8 @@ import { AppVersionUpdated } from './events/AppVersionUpdated';
 import { EventService } from './services/EventServices';
 import { MatSnackBar } from '@angular/material';
 import { ProgressInfo } from './events/ProgressInfo';
+import {MatSidenav} from '@angular/material/sidenav';
+import { Message } from './models/Message';
 declare let navigator: any;
 @Component({
   selector: 'app-root',
@@ -24,29 +26,42 @@ declare let navigator: any;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  reason = '';
+  @ViewChild('sidenav') sidenav: MatSidenav;
   limCourses: List<Course>;
   krkCourses: List<Course>;
   allCourses: List<Course>;
   direction: string;
+  message:Message;
+  appVersion;
   progressInfo:string = "Uruchamianie aplikacji";
   calculatingDuration = false;
   timetableIsActual = false;
   locationIsDetected = false;
   locationState: any = "test";
-
+  active ="Znajdź najbliższy";
   constructor(private appState: AppState, public snackBar: MatSnackBar, public zone: NgZone, private router: Router, public notService: NotificationService,
     public timetableService: TimetableUpdateService, public locationService: LocationService,
     private legendService: LegendService, public eventService: EventService) {
     
     this.eventSubscriptionInit();
     var that = this;
-    // document.addEventListener('deviceready', () => {
+     document.addEventListener('deviceready', () => {
     console.log("deviceIsReady");
     that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Uruchamianie aplikacji"))
     that.notService.updateNotification();
-    // });
+     });
 
     document.addEventListener("online", this.connected, false);
+  }
+  close(reason: string) {
+    this.reason = reason;
+    this.sidenav.close();
+  }
+
+  activate(activeState){
+    this.active = activeState;
+    this.close('escape');
   }
 
   eventSubscriptionInit() {
@@ -119,6 +134,8 @@ export class AppComponent {
     }
 
   afterNotificationUpdate() {
+    this.message = this.notService.getMessage();
+    this.appVersion = this.notService.getAppVersion();
     this.setTimetable();
     this.timetableIsActual = true;
     var that = this;

@@ -1,19 +1,31 @@
-<div style="margin-top: 75px;">
+<div>
+        <mat-toolbar style="height:50px" color="primary">
+                <div class="subTolbar">
+                  <mat-form-field style="width: 100px;
+                  font-size: 14px;">
+                    <mat-select placeholder="Z przystanku" [(ngModel)]="firstStop">
+                      <mat-option *ngFor="let stop of stops" [value]="stop.city">
+                        {{stop.city}}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field style="margin-left:20px;width: 70px;
+                  font-size: 14px;">
+                    <input matInput type="time" placeholder="O godzinie" [(ngModel)]="now" [ngxTimepicker]="picker" [format]="24">
+                    <ngx-material-timepicker #picker [defaultTime]="now"></ngx-material-timepicker>
+                </mat-form-field>
+                <button (click)="setNow()"  mat-button><i
+                    class="material-icons">
+                    access_time
+                  </i>Teraz</button>
+                </div>
+              </mat-toolbar>
     <div style="height: 87px;width: 100%;font-size: 20px; margin-top: 10px; display: flex;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;">
-        <img src="images/limanowaHerb.png" class="herb">
-        Kursy do Limanowej
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;">
+        <img src="{{imgSrc}}" class="herb">
     </div>
-    <app-course [isStart]="false" [allCourses]="limCourses" direction="Lim"></app-course>
-    <div style="height: 87px;width: 100%;font-size: 20px;  display: flex;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;">
-        <img src="images/krakowHerb.png" class="herb">
-        Kursy do Krakowa
-    </div>
-    <app-course [isStart]="false" [allCourses]="krkCourses" direction="Krk"></app-course>
+    <app-course [allCourses]="limCourses" [firstStop]="firstStop" [date]="now"></app-course>
 
 </div>

@@ -12,44 +12,55 @@ import { StopsSheets } from './components/stopsSheets.component';
 })
 export class TimetableComponent implements OnInit {
   timetable: List<Course>
+  timetableView: Array<Course>
 
-  limCoursesList: List<Course>
+  directionCoursesList: List<Course>
   krkCoursesList: List<Course>
 
   limCourses: Array<Course>
   krkCourses: Array<Course>
 
+
+  
+  directions = [{ value: 'Lim', viewValue: 'Do Krakowa' },
+  { value: 'Krk', viewValue: 'Do Limanowej' }];
+  
+  stopsView = [{ value: 'Że', viewValue: 'Żegocina' },
+  { value: 'Sz', viewValue: 'Szyka' },
+  { value: 'Ty', viewValue: 'Tymbark' },
+  { value: 'Ry', viewValue: 'Rybie' },
+  { value: 'All', viewValue: 'Wszystkie' },];
   hideFilterBar = true;
   zegocinaCourse = true;
   szykCourse = true;
   rybieCourse = true;
   tymbarkCourse = true;
-  activeTab ="Lim";
+  activeStop =null;
+  breakpoint = "3:1";
 
   constructor(public appState: AppState, private bottomSheet: MatBottomSheet) { }
 
   ngOnInit() {
     this.timetable = this.appState.timetable;
-    this.limCoursesList = this.timetable.Where(x => x.direction.startsWith("Lim")).OrderBy(x => x.firstStop.timeString);
-    this.krkCoursesList = this.timetable.Where(x => x.direction.startsWith("Krk")).OrderBy(x => x.firstStop.timeString);
-    this.krkCourses = this.krkCoursesList.ToArray();
-    this.limCourses = this.limCoursesList.ToArray();
+    this.getCoursesForDirection("Lim");
+    this.breakpoint = (window.innerWidth <= 450) ? "3:1" : "6:1";
+  }
+
+  onResize(event) {
+    this.breakpoint = (event.target.innerWidth <= 450) ? "3:1" : "6:1";
+  }
+
+  getCoursesForDirection(direction){
+    this.directionCoursesList = this.timetable.Where(x => x.direction.startsWith(direction)).OrderBy(x => x.firstStop.timeString);
+    this.timetableView = this.directionCoursesList.ToArray();
+    if(this.activeStop != null)
+      this.filterCourses(this.activeStop);
   }
 
   showStops(course:Course){
     this.bottomSheet.open(StopsSheets, {data:course});
   }
 
-  onTabClick(event: MatTabChangeEvent) {
-    console.log(event);
-    if(event.index == 0){
-      this.activeTab = "Lim";
-    }
-    else
-      this.activeTab = "Krk";
-
-    this.filterCourses();
-  }
 
   filterBarClick() {
     if (this.hideFilterBar == true) {
@@ -61,24 +72,8 @@ export class TimetableComponent implements OnInit {
     }
   }
 
-  filterCourses(){
-    if(this.activeTab == "Lim")
-      this.limCourses = this.limCoursesList.Where(x => this.showForDirection(x.direction) == true).ToArray();
-    else
-      this.krkCourses = this.krkCoursesList.Where(x => this.showForDirection(x.direction) == true).ToArray();
+  filterCourses(stops){
+    this.activeStop = stops;
+      this.timetableView = this.directionCoursesList.Where(x => x.direction.includes(stops) || stops == "All").ToArray();
   }
-
-  showForDirection(direction:string):boolean{
-    if(direction.includes("Sz") && this.szykCourse == true)
-      return true;
-    if(direction.includes("Że") && this.zegocinaCourse == true)
-      return true;
-    if(direction.includes("Ry") && this.rybieCourse == true)
-      return true;
-    if(direction.includes("Ty") && this.tymbarkCourse == true)
-      return true;
-
-    return false
-  }
-
 }

@@ -106,7 +106,9 @@ export class LocationService {
     getCurrentLocation(): string {
         return this.currentLocation;
     }
-
+    getReverseStops(){
+        return this.stopsLatAndLng.reverse();
+    }
     getDirection(): string {
         switch (this.currentLocation) {
             case "Kraków":

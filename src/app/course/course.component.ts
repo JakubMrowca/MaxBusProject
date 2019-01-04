@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, SimpleChange, OnChanges, SimpleChanges } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { Stop } from '../models/Stop';
@@ -11,38 +11,37 @@ import { CoursesFiltered } from '../events/CoursesFiltered';
 import { EventService } from '../services/EventServices';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { LocationChanged } from '../events/LocationChanged';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDatepickerToggle } from '@angular/material';
 declare let navigator: any;
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.css']
 })
-export class CourseComponent implements OnInit {
-  @Input() direction: string;
-  @Input() isStart: boolean;
+export class CourseComponent implements OnInit, OnChanges {
+  // @Input() direction: string;
+  @Input() firstStop: string;
   @Input() allCourses: List<Course>;
+  @Input() date:Date;
 
   timetableIsActual = true;
-  timePlus: TimeEnum = TimeEnum.near;
+  timePlus: TimeEnum = TimeEnum.old;
   timeMinus: TimeEnum = TimeEnum.veryNear;
   nearCourses: Array<Course>;
   calculatingDuration = false;
-  showLessPlus = false;
-  showLessMinus = false;
-  constTimeEnum = TimeEnum.near;
+ 
   progressWidth = 0;
   @Output() mapShowed = new EventEmitter<Course>();
   @Output() coursSelected = new EventEmitter<Course>();
 
-  constructor(private traffic: TraficService,public matSnackBar:MatSnackBar, public locationService: LocationService, private eventService: EventService) {
+  constructor(private traffic: TraficService, public matSnackBar: MatSnackBar, public locationService: LocationService, private eventService: EventService) {
     this.eventService.getMessage<CoursesFiltered>(CoursesFiltered).subscribe(message => {
       this.setTimetable();
     });
     this.eventService.getMessage<ProgressUpdated>(ProgressUpdated).subscribe(message => {
       this.progressWidth = message.progress;
     });
-    this.eventService.getMessage<LocationChanged>(LocationChanged).subscribe(message =>{
+    this.eventService.getMessage<LocationChanged>(LocationChanged).subscribe(message => {
       this.setTimetable();
     });
   }
@@ -52,78 +51,74 @@ export class CourseComponent implements OnInit {
     return cours.ToArray();
   }
 
-  moreCourse() {
-    var nearCoursesCount = this.nearCourses.length;
-    var courses;
-    if (this.showLessPlus == false) {
-      if (this.timePlus == TimeEnum.old) {
-        return;
-      }
-      this.timePlus = TimeEnumHelper.next(this.timePlus);
-      courses = this.getNearCourse(this.allCourses, this.timePlus, this.timeMinus);
-      if (nearCoursesCount == courses.length) {
-        this.moreCourse();
-        return;
-      }
-      this.showLessPlus = true;
+  ngOnChanges(changes: SimpleChanges) {
+    if ('allCourses' in changes) {
+      this.setTimetable();
     }
-    else {
-      this.showLessPlus = false;
-      this.timePlus = TimeEnum.near;
-      courses = this.getNearCourse(this.allCourses, this.timePlus, this.timeMinus);
+    if('firstStop' in changes){
+      this.setTimetable();
     }
-    this.nearCourses = courses
+    if('date' in changes){
+      if(typeof changes.date.currentValue.getMonth === 'function'){
+      }else{
+        var date = new Date();
+        var split =changes.date.currentValue.split(':');
+        date.setHours(Number.parseInt(split[0].trim()));
+        date.setMinutes(Number.parseInt(split[1].trim()));
+        this.date = date;
+      }
+      this.setTimetable();
+    }
   }
-
   setTimetable() {
     this.nearCourses = this.getNearCourse(this.allCourses, this.timePlus, this.timeMinus);
   }
 
-  calculateTraffic(course: Course) {
-    var connection = navigator.connection.type;
-    console.log(connection);
-    if(connection == "none"){
-      this.matSnackBar.open("Brak połączenia z siecią!", "", {
-        duration: 2000,
-      });
-      return;
-    }
-    course.traficIsCalculate = true;
-    this.progressWidth = 1;
-    this.traffic.calculateDurrationForStop(course, 0).then(data => {
-      for (let i = 0; i < this.nearCourses.length; i++) {
-        if (this.nearCourses[i].direction == course.direction && this.nearCourses[i].firstStop.timeString == course.firstStop.timeString)
-          this.nearCourses[i] = course;
-      }
-    }, error => {
-      course.traficIsCalculate = false;
-      this.progressWidth = 0;
-    });
-  }
+  // calculateTraffic(course: Course) {
+  //   var connection = navigator.connection.type;
+  //   console.log(connection);
+  //   if (connection == "none") {
+  //     this.matSnackBar.open("Brak połączenia z siecią!", "", {
+  //       duration: 2000,
+  //     });
+  //     return;
+  //   }
+  //   course.traficIsCalculate = true;
+  //   this.progressWidth = 1;
+  //   this.traffic.calculateDurrationForStop(course, 0).then(data => {
+  //     for (let i = 0; i < this.nearCourses.length; i++) {
+  //       if (this.nearCourses[i].direction == course.direction && this.nearCourses[i].firstStop.timeString == course.firstStop.timeString)
+  //         this.nearCourses[i] = course;
+  //     }
+  //   }, error => {
+  //     course.traficIsCalculate = false;
+  //     this.progressWidth = 0;
+  //   });
+  // }
 
   isFirstStop(course: Course, stop: Stop) {
-    if (course.firstStop.city == stop.city && this.isStart)
+    if (course.firstStop.city == stop.city)
       return true;
     return false;
   }
 
   timeIsNear(cours: Course, timePlus: TimeEnum, timeMinus: TimeEnum): boolean {
-
-    if (this.isStart == true) {
-      var stop = this.getStopForLocation(cours.stops);
-      if (stop == null)
+    var stop = this.getStopForLocation(cours.stops);
+    if (stop == null)
         return false
-      cours.firstStop = stop;
-    }
+    cours.courseFirstStop = stop;
 
-    var now = new Date();
+    var now = this.date;
     var nowTo = new Date();
     var nowFrom = new Date();
 
+    nowTo.setHours(now.getHours());
     nowTo.setMinutes(now.getMinutes() + timePlus)
+    nowFrom.setHours(now.getHours());
     nowFrom.setMinutes(now.getMinutes() - timeMinus)
+
     var coursDate = new Date();
-    coursDate.setHours(cours.firstStop.time.hours, cours.firstStop.time.minutes);
+    coursDate.setHours(cours.courseFirstStop.time.hours, cours.courseFirstStop.time.minutes);
 
     if (coursDate >= nowFrom && coursDate <= nowTo) {
       return true;
@@ -134,7 +129,7 @@ export class CourseComponent implements OnInit {
   getStopForLocation(stops: Array<Stop>): Stop {
     var stop: Stop = null;
     stops.forEach(element => {
-      if (element.city == this.locationService.getCurrentLocation())
+      if (element.city == this.firstStop)
         stop = element;
     });
     return stop;
@@ -177,5 +172,16 @@ export class CourseComponent implements OnInit {
 
   go(course: Course) {
     this.coursSelected.emit(course);
+  }
+
+  directionResolve(direction) {
+    if (direction.includes("Ry"))
+      return "Rybie"
+    else if (direction.includes("Że"))
+      return "Żegocina"
+    else if (direction.includes("Ty"))
+      return "Tymbark"
+    else if (direction.includes("Sz"))
+      return "Szyk"
   }
 }
