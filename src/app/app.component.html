@@ -25,7 +25,7 @@
 <mat-sidenav-container class="example-container" (backdropClick)="close('backdrop')">
 
     <mat-sidenav class="imgNav" #sidenav (keydown.escape)="close('escape')" disableClose>
-        <img src="images/Limanowa.jpg">
+        <img src="../assets/Limanowa.jpg">
 
         <p style="margin-top:-4px"><button [ngClass]="{'activeLink': active=='Znajdź najbliższy'}"  [routerLink]="['/start']" (click)="activate('Znajdź najbliższy')" mat-button>
                 <mat-icon>explore</mat-icon>

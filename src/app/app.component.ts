@@ -46,11 +46,11 @@ export class AppComponent {
     
     this.eventSubscriptionInit();
     var that = this;
-     document.addEventListener('deviceready', () => {
+    //  document.addEventListener('deviceready', () => {
     console.log("deviceIsReady");
     that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Uruchamianie aplikacji"))
     that.notService.updateNotification();
-     });
+    //  });
 
     document.addEventListener("online", this.connected, false);
   }

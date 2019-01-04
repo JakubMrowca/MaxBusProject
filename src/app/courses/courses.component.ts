@@ -33,11 +33,11 @@ export class CoursesComponent implements OnInit {
       this.zone.run(() => {
         if (this.direction == "Krk"){
           this.firstStop = "Kraków";
-          this.imgSrc = "images/LimHerb.png"
+          this.imgSrc = "../../assets/LimHerb.png"
         }
         if (this.direction == "Lim") {
           this.firstStop == "Limanowa";
-          this.imgSrc = "images/KrkHerb.png"
+          this.imgSrc = "../../assets/KrkHerb.png"
         }
         this.getCourseForDirection();
       });
