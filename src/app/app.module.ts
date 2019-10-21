@@ -137,7 +137,7 @@ const path: Routes = [
     MatTreeModule,
     BrowserAnimationsModule
   ],
-  entryComponents:[StopsSheets, MapSheet,OptionsSheets],
+  entryComponents:[StopsSheets, MapSheet,OptionsSheets,SingleCourseComponent],
   providers: [NotificationService, AppState, LegendService, LocalStorageHelper, TimetableUpdateService, LocationService,TraficService, EventService,BusLocationServices],
   bootstrap: [AppComponent]
 })

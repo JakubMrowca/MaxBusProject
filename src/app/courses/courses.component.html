@@ -11,8 +11,7 @@
                   </mat-form-field>
                   <mat-form-field style="margin-left:20px;width: 70px;
                   font-size: 14px;">
-                    <input matInput type="time" placeholder="O godzinie" [(ngModel)]="now" [ngxTimepicker]="picker" [format]="24">
-                    <ngx-material-timepicker #picker [defaultTime]="now"></ngx-material-timepicker>
+                    <input matInput type="time" placeholder="O godzinie" [(ngModel)]="now">
                 </mat-form-field>
                 <button (click)="setNow()"  mat-button><i
                     class="material-icons">

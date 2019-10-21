@@ -1,50 +1,40 @@
-   <mat-card style="padding: 0px;margin:3px">
-    <div id="mapStart" style="height:300px" class="row content flex-map"></div>
-    <mat-grid-list *ngIf="searchEnd" cols="2" rowHeight="3:1">
-  
-      <mat-grid-tile style="flex-direction:column">
-        {{nearStop.city}}
-        <p style="margin:2px;font-size: 12px;color: grey">Najbliższy przystanek</p>
+<mat-nav-list>
+  <h3 style="text-align: center;">{{resolveDirection(course)}}</h3>
+  <mat-grid-list cols="3" rowHeight="3:1">
+      <mat-grid-tile style="flex-direction:column-reverse">
+          {{course.stops[0].timeString}}
+        <p style="margin:2px;font-size: 12px;color: grey">Odjazd</p>
       </mat-grid-tile>
       <mat-grid-tile style="flex-direction:column">
-        {{nearStop.data.duration.text}}
-        <p style="margin:2px;font-size: 12px;color: grey">Czas dojścia</p>
+          {{course.stops[course.stops.length-1].timeString}}
+        <p style="margin:2px;font-size: 12px;color: grey">Przyjazd</p>
       </mat-grid-tile>
-    </mat-grid-list>
-    <mat-grid-list *ngIf="!searchEnd" cols="1" rowHeight="3:1">
-  
-      <mat-grid-tile style="flex-direction:column">
-        Znajdź odjazdy z najbliższego przystanku
-        <p style="margin:2px;font-size: 12px;color: grey">określ kierunek i sposób dotarcia</p>
+      <mat-grid-tile style="flex-direction:column;color:#e57373">
+          {{calculateTravelTime(course)}}
+        <p style="margin:2px;font-size: 12px;color: grey">Czas</p>
       </mat-grid-tile>
     </mat-grid-list>
+  <br>
+  <mat-grid-list cols="2" rowHeight="20:3">
+          <mat-grid-tile style="background-color:#e57373">Przystanek</mat-grid-tile>
+          <mat-grid-tile style="background-color:#e57373">Czas</mat-grid-tile>
+          <div *ngFor="let stop of course.stops">
+            <mat-grid-tile>{{stop.city}}</mat-grid-tile>
+            <mat-grid-tile>{{stop.timeString}}</mat-grid-tile>
+          </div>
+  </mat-grid-list>
+  <div style="height: 15px;">
   
-  </mat-card>
-  <div *ngIf="progressWidth > 0 && progressWidth < 100">
-    <mat-progress-bar color="warn" mode="determinate" value="{{progressWidth}}"></mat-progress-bar>
+      <mat-progress-bar color="primary" mode="determinate" value="{{progressW}}"></mat-progress-bar>
+
   </div>
-  <div *ngIf="searchEnd">
-    <h3 style="text-align: center;font-family: Roboto, 'Helvetica Neue', sans-serif;">Odjazdy z <span style="color:#e57373">{{nearStop.city}}
-      </span></h3>
-    <div *ngFor="let course of displayCourses">
-      <mat-card style="padding: 5px;margin:3px">
-        <mat-grid-list cols="3" rowHeight="3:1">
-  
-          <mat-grid-tile style="flex-direction:column-reverse">
-            {{course.direction}}
-            <p style="margin:2px;font-size: 12px;color: grey">Kierunek</p>
-          </mat-grid-tile>
-          <mat-grid-tile style="flex-direction:column">
-            {{course.firstStop.timeString}}
-            <p style="margin:2px;font-size: 12px;color: grey">Odjazd</p>
-          </mat-grid-tile>
-          <mat-grid-tile style="flex-direction:column;color:#e57373">
-            {{calculateTimeString(course.firstStop)}}
-            <p style="margin:2px;font-size: 12px;color: grey">Za</p>
-          </mat-grid-tile>
-        </mat-grid-list>
-      </mat-card>
-    </div>
+  <div style="text-align: center;color: #e57373;">
+      <button [disabled]="course.traficIsCalculate" (click)="calculateTraffic()" mat-button>Uwzględnij czas w korkach</button>
   </div>
+  <hr>
+  <div style="text-align: center;" class="legend" *ngFor="let legend of legends">
+      <div>{{legend}} - {{symbolLegend[legend]}}</div>
+  </div>
+</mat-nav-list>
   
   

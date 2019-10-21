@@ -127,11 +127,14 @@ export class TraficService {
             }, data => {
                 if (data == null) {
                     resolve(null);
-                    console.log(start);
-                    console.log(end);
-                    console.log(time);
+                    console.log("Error");
                 }
+                try{
                 var duration = data.routes["0"].legs["0"].duration_in_traffic.value;
+                }catch{
+                    var durationWithoutTraffic = data.routes["0"].legs["0"].duration.value; 
+                    resolve(durationWithoutTraffic)
+                }
                 resolve(duration);
             });
         });

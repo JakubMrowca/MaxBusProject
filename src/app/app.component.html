@@ -53,10 +53,10 @@
             </button>
         </div>
         <p>
-        <button mat-button [ngClass]="{'activeLink': active=='Mapa busów'}" [routerLink]="['/maps']" (click)="activate('Mapa busów')">
+        <!-- <button mat-button [ngClass]="{'activeLink': active=='Mapa busów'}" [routerLink]="['/maps']" (click)="activate('Mapa busów')">
                     <i class="material-icons">
                         map
-                    </i>Mapa busów</button></p>
+                    </i>Mapa busów</button></p> -->
       <div style="position:absolute; bottom:10px;right:10px;color:#e57373;font-family: Roboto, 'Helvetica Neue', sans-serif;">
         v{{appVersion}}
         </div>
@@ -67,7 +67,7 @@
             <button style="padding-left:0px;padding-right:0px;min-width: unset;margin-right: 10px;" (click)="sidenav.open()" mat-button>
                 <i class="material-icons">
                     menu
-                </i></button>{{active}}
+                </i></button><div style="width: 100%;text-align: center">{{active}}</div>
         </mat-toolbar>
         <router-outlet></router-outlet>
     </mat-sidenav-content>

@@ -19,6 +19,7 @@ import { initDomAdapter } from '../../../node_modules/@angular/platform-browser/
 import { BusLocationServices } from '../services/BusLocationServices';
 import { OptionsSheets } from './components/options-sheets.component';
 import { Stop } from '../models/Stop';
+import { SingleCourseComponent } from '../single-course/single-course.component';
 const secondsCounter = interval(15000);
 
 @Component({
@@ -320,7 +321,16 @@ export class StartComponent implements OnInit {
     this.appVersion = this.notService.getAppVersion();
     this.message = this.notService.getMessage();
     this.hideNotification = !this.message.unread;
-
+    var mapDiv = document.getElementById('mapStart');
+    mapDiv.addEventListener('touchstart', function(e){
+      e.stopPropagation();
+     }, false);
+    mapDiv.addEventListener('touchmove', function(e){
+      e.stopPropagation();
+     }, false);
+    mapDiv.addEventListener('touchend', function(e){
+      e.stopPropagation();
+     }, false);
     var origin = new google.maps.LatLng(this.appState.yourCord.lat, this.appState.yourCord.lng);
     this.map = new google.maps.Map(document.getElementById('mapStart'), {
       zoom: 11,
@@ -480,6 +490,10 @@ export class StartComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  showDetails(course:Course){
+    this.bottomSheet.open(SingleCourseComponent, { data: course });
   }
 
   getNextCourse() {

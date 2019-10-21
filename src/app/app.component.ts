@@ -1,4 +1,4 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild, OnInit } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
 import { List } from 'linqts';
 import { Course } from './models/Course';
@@ -25,7 +25,7 @@ declare let navigator: any;
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   reason = '';
   @ViewChild('sidenav') sidenav: MatSidenav;
   limCourses: List<Course>;
@@ -50,15 +50,17 @@ export class AppComponent {
     console.log("deviceIsReady");
     that.eventService.sendEvent(ProgressInfo,new ProgressInfo("Uruchamianie aplikacji"))
     that.notService.updateNotification();
-    //  });
-
+    //});
     document.addEventListener("online", this.connected, false);
   }
   close(reason: string) {
     this.reason = reason;
     this.sidenav.close();
   }
+ngOnInit(){
+  
 
+}
   activate(activeState){
     this.active = activeState;
     this.close('escape');
@@ -170,6 +172,59 @@ export class AppComponent {
     this.allCourses = this.timetableService.getTimetable();
     this.appState.timetable = this.allCourses;
     this.appState.allCourses = this.allCourses.Where(x => this.legendService.courseIsInThisDay(x) == true).ToList();
+    this.initSwip();
 
+  }
+  initSwip(){
+    var that = this;
+  window.addEventListener('load', function(){
+     
+        var touchsurface = document.getElementById('touchsurface'),
+            startX,
+            startY,
+            dist,
+            threshold = 100, //required min distance traveled to be considered swipe
+            allowedTime = 300, // maximum time allowed to travel that distance
+            elapsedTime,
+            startTime
+     
+        function handleswipe(isrightswipe,event){
+            if (isrightswipe)
+               {{that.sidenav.open()}}
+            else{
+           
+            }
+        }
+     
+        touchsurface.addEventListener('touchstart', function(e){
+            var touchobj = e.changedTouches[0]
+            dist = 0
+            startX = touchobj.pageX
+            startY = touchobj.pageY
+            startTime = new Date().getTime() // record time when finger first makes contact with surface
+            
+        }, false)
+     
+        touchsurface.addEventListener('touchmove', function(e){
+           
+        }, false)
+     
+        touchsurface.addEventListener('touchend', function(e){
+            var touchobj = e.changedTouches[0]
+          
+            dist = touchobj.pageX - startX // get total dist traveled by finger while in contact with surface
+            elapsedTime = new Date().getTime() - startTime // get time elapsed
+            // check that elapsed time is within specified, horizontal dist traveled >= threshold, and vertical dist traveled <= 100
+            var swipeLeftBol = (elapsedTime <= allowedTime && dist <= threshold && Math.abs(touchobj.pageY - startY) <= 100)
+            var swiperightBol = (elapsedTime <= allowedTime && dist >= threshold && Math.abs(touchobj.pageY - startY) <= 100)
+            if(swiperightBol)
+              handleswipe(swiperightBol,e)
+            else if(swipeLeftBol){
+              that.sidenav.close();
+            }
+           
+        }, false)
+     
+    }, false) // end window.onload
   }
 }
