@@ -79,16 +79,19 @@ export class TraficService {
             timeTo.setHours(nextStop.time.hours);
             timeTo.setMinutes(nextStop.time.minutes);
             this.oldTimeTo = moment(timeTo);
-            this.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city], time).then(resolve5 => {
-                this.calculateTime(nextStop, time, timeTo, resolve5);
-                this.calculateDurrationForStop(cours, i + 1).then(end => {
-                        resolve();
+            var that = this
+            setTimeout(function(){
+                that.send(stopNameInGoogle[stop.city], stopNameInGoogle[nextStop.city], time).then(resolve5 => {
+                    that.calculateTime(nextStop, time, timeTo, resolve5);
+                    that.calculateDurrationForStop(cours, i + 1).then(end => {
+                            resolve();
+                    }, error => {
+                        reject();
+                    });
                 }, error => {
                     reject();
                 });
-            }, error => {
-                reject();
-            });
+            },500)
         });
     }
 

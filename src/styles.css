@@ -34,3 +34,7 @@ html{
 .legend div{
     margin-bottom: 4px;
 }
+::ng-deep .mat-bottom-sheet-container{
+    max-height: 100vh!important;
+    height: 100%!important;
+}

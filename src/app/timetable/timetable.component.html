@@ -19,7 +19,7 @@
 </mat-toolbar>
 
 <div *ngFor="let course of timetableView">
-  <mat-card style="padding: 5px;margin:3px">
+  <mat-card (click)="showDetails(course)" style="padding: 5px;margin:3px">
     <mat-grid-list cols="3" [rowHeight]="breakpoint" (window:resize)="onResize($event)">
 
       <mat-grid-tile style="flex-direction:column-reverse">

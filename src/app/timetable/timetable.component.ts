@@ -4,6 +4,7 @@ import { Course } from '../models/Course';
 import { AppState } from '../services/AppState';
 import { MatTabChangeEvent, MatBottomSheet } from '@angular/material';
 import { StopsSheets } from './components/stopsSheets.component';
+import { SingleCourseComponent } from '../single-course/single-course.component';
 
 @Component({
   selector: 'app-timetable',
@@ -70,6 +71,10 @@ export class TimetableComponent implements OnInit {
     {
       this.hideFilterBar = true;
     }
+  }
+
+  showDetails(course:Course){
+    this.bottomSheet.open(SingleCourseComponent, { data: course });
   }
 
   filterCourses(stops){

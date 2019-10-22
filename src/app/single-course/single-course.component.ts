@@ -6,6 +6,7 @@ import { MatSnackBar, MatDatepickerToggle } from '@angular/material';
 import { TraficService } from '../services/TraficService';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { EventService } from '../services/EventServices';
+import { BehaviorSubject } from 'rxjs';
 declare let navigator: any;
 
 @Component({
@@ -15,7 +16,9 @@ declare let navigator: any;
 })
 export class SingleCourseComponent implements OnInit {
   course: Course
-  progressW:number;
+  progressW:number = 0;
+  calculateInProgress = false;
+  testEmitter = new BehaviorSubject<number>(this.progressW);
   legends: Array<string>;
   symbolLegend = {
     "F": "kursuje w dni robocze",
@@ -27,9 +30,9 @@ export class SingleCourseComponent implements OnInit {
   constructor(private traffic:TraficService,public eventServ:EventService,public zone:NgZone, public matSnackBar: MatSnackBar, private bottomSheetRef: MatBottomSheetRef<SingleCourseComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
     this.course = data;
     this.eventServ.getMessage<ProgressUpdated>(ProgressUpdated).subscribe(message => {
-      this.zone.run(() => {
         this.progressW = message.progress;
-      })
+        this.testEmitter.next(this.progressW);
+        console.log(message.progress)
     });
     this.legends = this.course.legends.split(" ");
   }
@@ -86,24 +89,28 @@ export class SingleCourseComponent implements OnInit {
         break;
     }
   }
-
+  back(){
+    this.bottomSheetRef.dismiss();
+  }
     calculateTraffic() {
-      var courseTmp = this.course;
+    this.calculateInProgress = true;
+    var courseTmp = this.course;
     var connection = navigator.connection.type;
     console.log(connection);
     if (connection == "none") {
       this.matSnackBar.open("Brak połączenia z siecią!", "", {
         duration: 2000,
       });
+      this.calculateInProgress = false;
       return;
     }
     courseTmp.traficIsCalculate = true;
-    this.progressW = 1;
     this.traffic.calculateDurrationForStop(courseTmp, 0).then(data => {
       this.course = courseTmp;
+      this.calculateInProgress = false;
     }, error => {
       courseTmp.traficIsCalculate = false;
-      this.progressW = 0;
+      this.calculateInProgress = false;
     });
   }
 

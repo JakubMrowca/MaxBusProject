@@ -11,7 +11,8 @@ import { CoursesFiltered } from '../events/CoursesFiltered';
 import { EventService } from '../services/EventServices';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { LocationChanged } from '../events/LocationChanged';
-import { MatSnackBar, MatDatepickerToggle } from '@angular/material';
+import { MatSnackBar, MatDatepickerToggle, MatBottomSheet } from '@angular/material';
+import { SingleCourseComponent } from '../single-course/single-course.component';
 declare let navigator: any;
 @Component({
   selector: 'app-course',
@@ -34,7 +35,7 @@ export class CourseComponent implements OnInit, OnChanges {
   @Output() mapShowed = new EventEmitter<Course>();
   @Output() coursSelected = new EventEmitter<Course>();
 
-  constructor(private traffic: TraficService, public matSnackBar: MatSnackBar, public locationService: LocationService, private eventService: EventService) {
+  constructor(private traffic: TraficService, public matSnackBar: MatSnackBar,public bottomSheet:MatBottomSheet, public locationService: LocationService, private eventService: EventService) {
     this.eventService.getMessage<CoursesFiltered>(CoursesFiltered).subscribe(message => {
       this.setTimetable();
     });
@@ -124,6 +125,10 @@ export class CourseComponent implements OnInit, OnChanges {
       return true;
     }
     return false;
+  }
+
+  showDetails(course:Course){
+    this.bottomSheet.open(SingleCourseComponent, { data: course });
   }
 
   getStopForLocation(stops: Array<Stop>): Stop {
