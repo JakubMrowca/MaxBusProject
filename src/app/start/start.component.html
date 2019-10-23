@@ -23,6 +23,9 @@
   </div>
 </mat-toolbar>
 <mat-card style="padding: 0px;margin:3px">
+  <div *ngIf="progressWidth > 0 && progressWidth < 100">
+    <mat-progress-bar color="warn" mode="determinate" value="{{progressWidth}}"></mat-progress-bar>
+  </div>
   <div id="mapStart" style="height:300px" class="row content flex-map"></div>
   <mat-grid-list *ngIf="searchEnd" cols="2" rowHeight="3:1">
 
@@ -44,9 +47,16 @@
   </mat-grid-list>
 
 </mat-card>
-<div *ngIf="progressWidth > 0 && progressWidth < 100">
-  <mat-progress-bar color="warn" mode="determinate" value="{{progressWidth}}"></mat-progress-bar>
-</div>
+<mat-card style="padding: 0px;margin:3px;margin-top:10px;text-align: center;">
+  <mat-grid-list *ngIf="!searchEnd && message !=undefined" cols="1" rowHeight="3:1">
+
+    <mat-grid-tile style="flex-direction:column">
+      {{message.text}}
+      <p style="margin:2px;font-size: 12px;color: grey">{{message.timestamp}}</p>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-card>
+
 <div *ngIf="searchEnd">
   <h3 style="text-align: center;font-family: Roboto, 'Helvetica Neue', sans-serif;">Odjazdy z <span style="color:#e57373">{{nearStop.city}}
     </span></h3>

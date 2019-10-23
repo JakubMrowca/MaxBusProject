@@ -128,7 +128,7 @@ export class CourseComponent implements OnInit, OnChanges {
   }
 
   showDetails(course:Course){
-    this.bottomSheet.open(SingleCourseComponent, { data: course });
+    this.bottomSheet.open(SingleCourseComponent, { data:{ course:course,fullMode:true} });
   }
 
   getStopForLocation(stops: Array<Stop>): Stop {

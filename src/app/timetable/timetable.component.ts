@@ -74,7 +74,7 @@ export class TimetableComponent implements OnInit {
   }
 
   showDetails(course:Course){
-    this.bottomSheet.open(SingleCourseComponent, { data: course });
+    this.bottomSheet.open(SingleCourseComponent, { data:{ course:course,fullMode:false} });
   }
 
   filterCourses(stops){

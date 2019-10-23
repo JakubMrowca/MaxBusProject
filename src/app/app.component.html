@@ -37,7 +37,7 @@
                     format_list_bulleted
                 </i>Rozkład</button></p>
 
-        <button [routerLink]="['/courses']" mat-button [ngClass]="{'activeLink': active.includes('Odjazdy')}">
+        <button style="color: black!important;" [disabled]="true" mat-button [ngClass]="{'activeLink': active.includes('Odjazdy')}">
             <i class="material-icons">
                 directions_bus
             </i> Odjazdy
@@ -65,10 +65,17 @@
     <mat-sidenav-content>
         <mat-toolbar style="height:40px" color="primary">
             <button style="padding-left:0px;padding-right:0px;min-width: unset;margin-right: 10px;" (click)="sidenav.open()" mat-button>
-                <i class="material-icons">
+                <i  style="font-size: 36px;" class="material-icons">
                     menu
-                </i></button><div style="width: 100%;text-align: center">{{active}}</div>
+                </i></button><div style="width: 100%;text-align: left">{{active}}</div>
         </mat-toolbar>
-        <router-outlet></router-outlet>
+        <div *ngIf="!locationIsDetected || !timetableIsActual" class="spinner-center">
+            <mat-spinner></mat-spinner>
+          
+        </div>
+        <div *ngIf="!locationIsDetected || !timetableIsActual" class="progressInfo">{{progressInfo}}</div>
+        <div *ngIf="locationIsDetected && timetableIsActual">
+            <router-outlet></router-outlet>
+        </div>
     </mat-sidenav-content>
 </mat-sidenav-container>

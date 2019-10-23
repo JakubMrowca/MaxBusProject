@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, NgZone } from '@angular/core';
+import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material';
 import { MatBottomSheetRef } from "@angular/material";
 import { Course } from '../models/Course';
@@ -6,7 +6,8 @@ import { MatSnackBar, MatDatepickerToggle } from '@angular/material';
 import { TraficService } from '../services/TraficService';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { EventService } from '../services/EventServices';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Stop } from '../models/Stop';
 declare let navigator: any;
 
 @Component({
@@ -14,10 +15,12 @@ declare let navigator: any;
   templateUrl: './single-course.component.html',
   styleUrls: ['./single-course.component.css']
 })
-export class SingleCourseComponent implements OnInit {
+export class SingleCourseComponent implements OnInit, OnDestroy {
   course: Course
-  progressW:number = 0;
+  fullMode = true;
+  progressW: number = 0;
   calculateInProgress = false;
+  subscription;
   testEmitter = new BehaviorSubject<number>(this.progressW);
   legends: Array<string>;
   symbolLegend = {
@@ -27,12 +30,13 @@ export class SingleCourseComponent implements OnInit {
     "P": "kursuje tylko w piątek",
     "6": "kursuje w soboty"
   }
-  constructor(private traffic:TraficService,public eventServ:EventService,public zone:NgZone, public matSnackBar: MatSnackBar, private bottomSheetRef: MatBottomSheetRef<SingleCourseComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
-    this.course = data;
-    this.eventServ.getMessage<ProgressUpdated>(ProgressUpdated).subscribe(message => {
-        this.progressW = message.progress;
-        this.testEmitter.next(this.progressW);
-        console.log(message.progress)
+  constructor(private traffic: TraficService, public eventServ: EventService, public zone: NgZone, public matSnackBar: MatSnackBar, private bottomSheetRef: MatBottomSheetRef<SingleCourseComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
+    this.course = data.course;
+    this.fullMode = data.fullMode;
+    this.subscription = this.eventServ.getMessage<ProgressUpdated>(ProgressUpdated).subscribe(message => {
+      this.progressW = message.progress;
+      this.testEmitter.next(this.progressW);
+      console.log(message.progress)
     });
     this.legends = this.course.legends.split(" ");
   }
@@ -42,12 +46,29 @@ export class SingleCourseComponent implements OnInit {
     event.preventDefault();
   }
 
+  calculateTimeString(stop: Stop) {
+    if (stop.time == null)
+      return "";
+    var now = new Date();
+    var stopDate = new Date();
+    stopDate.setHours(stop.time.hours);
+    stopDate.setMinutes(stop.time.minutes);
+    var difference = stopDate.getTime() - now.getTime();
+    var resultInMinutes = Math.round(difference / 60000);
+    if (resultInMinutes >= 60) {
+      var hourResult = Number.parseInt((resultInMinutes / 60).toString());
+      var minResult = resultInMinutes % 60;
+      return hourResult.toString() + " h " + minResult.toString() + " min"
+    } else
+      return resultInMinutes.toString() + " min";
+  }
+
   ngOnInit() {
 
   }
   calculateTravelTime(course: Course) {
     var firstStop = course.stops[0];
-    var lastStop = course.stops[course.stops.length -1];
+    var lastStop = course.stops[course.stops.length - 1];
     if (firstStop.time == null)
       return "";
     var lastStopDate = new Date();
@@ -89,16 +110,23 @@ export class SingleCourseComponent implements OnInit {
         break;
     }
   }
-  back(){
+  back() {
     this.bottomSheetRef.dismiss();
   }
-    calculateTraffic() {
+  calculateTraffic() {
     this.calculateInProgress = true;
     var courseTmp = this.course;
     var connection = navigator.connection.type;
     console.log(connection);
     if (connection == "none") {
       this.matSnackBar.open("Brak połączenia z siecią!", "", {
+        duration: 2000,
+      });
+      this.calculateInProgress = false;
+      return;
+    }
+    if (this.dateIsPasst(courseTmp.stops[0])) {
+      this.matSnackBar.open("Informacje o ruchu drogowym są dostępne tylko dla przyszłych i bieżących kursów!", "", {
         duration: 2000,
       });
       this.calculateInProgress = false;
@@ -113,5 +141,24 @@ export class SingleCourseComponent implements OnInit {
       this.calculateInProgress = false;
     });
   }
+  dateIsPasst(stop: Stop): boolean {
+    if (stop.time == null)
+      return false;
+    var now = new Date();
+    var stopDate = new Date();
+    stopDate.setHours(stop.time.hours);
+    stopDate.setMinutes(stop.time.minutes);
+    var difference = stopDate.getTime() - now.getTime();
+    var resultInMinutes = Math.round(difference / 60000);
+    if (resultInMinutes > 0)
+      return false;
+    else
+      return true;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
 
 }

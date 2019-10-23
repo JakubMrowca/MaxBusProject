@@ -61,6 +61,7 @@ export class StartComponent implements OnInit {
   location: string;
   constructor(private appState: AppState, public snackBar: MatSnackBar, public traficService: TraficService, public busLocation: BusLocationServices, public zone: NgZone, private bottomSheet: MatBottomSheet, private notService: NotificationService, private eventServ: EventService, private locationService: LocationService) {
     this.allCourses = this.appState.allCourses;
+    this.message = this.notService.getMessage();
     this.travelModeEnum = google.maps.TravelMode.WALKING;
     this.eventServ.getMessage<LocationDetected>(LocationDetected).subscribe(message => {
       this.direction = this.locationService.getDirection();
@@ -320,7 +321,8 @@ export class StartComponent implements OnInit {
     this.getCourseForDirection(false);
     this.appVersion = this.notService.getAppVersion();
     this.message = this.notService.getMessage();
-    this.hideNotification = !this.message.unread;
+
+    // this.hideNotification = !this.message.unread;
     var mapDiv = document.getElementById('mapStart');
     mapDiv.addEventListener('touchstart', function(e){
       e.stopPropagation();
@@ -493,7 +495,7 @@ export class StartComponent implements OnInit {
   }
 
   showDetails(course:Course){
-    this.bottomSheet.open(SingleCourseComponent, { data: course });
+    this.bottomSheet.open(SingleCourseComponent, { data:{ course:course,fullMode:true} });
   }
 
   getNextCourse() {
