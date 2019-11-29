@@ -32,6 +32,7 @@ export class CoursesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.showTime();
     console.log("courses");
     this.loadDateString()
     this.interval = secondsCounter.subscribe(n => {
