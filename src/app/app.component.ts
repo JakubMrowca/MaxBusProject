@@ -27,7 +27,7 @@ declare let navigator: any;
 })
 export class AppComponent implements OnInit {
   reason = '';
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild('sidenav',null) sidenav: MatSidenav;
   limCourses: List<Course>;
   krkCourses: List<Course>;
   allCourses: List<Course>;

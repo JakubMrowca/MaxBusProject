@@ -61,7 +61,7 @@ import { AppState } from './services/AppState';
 import { HomeComponent } from './home/home.component';
 import { StopsSheets } from './timetable/components/stopsSheets.component';
 import { MapSheet } from './start/components/mapSheet.component';
-import { watchedCourseComponent } from './start/components/watchedCourse.component';
+// import { watchedCourseComponent } from './start/components/watchedCourse.component';
 import { BusLocationServices } from './services/BusLocationServices';
 import { OptionsSheets } from './start/components/options-sheets.component';
 import { SingleCourseComponent } from './single-course/single-course.component';
@@ -80,7 +80,7 @@ const path: Routes = [
     AppComponent,
     CourseComponent,
     StartComponent,
-    watchedCourseComponent,
+    // watchedCourseComponent,
     TimetableComponent,
     CoursesComponent,
     HomeComponent,

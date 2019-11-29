@@ -17,7 +17,6 @@ import { EventService } from '../services/EventServices';
 import { LocationChanged } from '../events/LocationChanged';
 import { TraficService } from '../services/TraficService';
 import { ProgressUpdated } from '../events/ProgressUpdated';
-import { initDomAdapter } from '../../../node_modules/@angular/platform-browser/src/browser';
 import { BusLocationServices } from '../services/BusLocationServices';
 import { OptionsSheets } from './components/options-sheets.component';
 import { Stop } from '../models/Stop';

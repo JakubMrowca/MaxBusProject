@@ -7,6 +7,7 @@ import { } from 'googlemaps';
 import { Course } from "../models/Course";
 import { DirectionEnum } from "../helpers/DirectionEnum";
 import { EventService } from "./EventServices";
+
 import { ProgressUpdated } from "../events/ProgressUpdated";
 
 const httpOptions = {

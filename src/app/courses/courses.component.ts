@@ -6,6 +6,7 @@ import { switchMap ,  map, share } from 'rxjs/operators';
 import { LocationService } from '../services/LocationService';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { interval, Observable } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-courses',

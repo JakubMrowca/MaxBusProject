@@ -1,4 +1,3 @@
-import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
 import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { MatBottomSheetRef } from "@angular/material/bottom-sheet";
 import { Course } from '../models/Course';
@@ -9,6 +8,7 @@ import { ProgressUpdated } from '../events/ProgressUpdated';
 import { EventService } from '../services/EventServices';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Stop } from '../models/Stop';
+import { OnDestroy, OnInit, NgZone, Component, Inject } from '@angular/core';
 declare let navigator: any;
 
 @Component({
