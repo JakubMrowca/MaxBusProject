@@ -2,12 +2,12 @@ import { Component, OnInit, Input, NgZone } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { AppState } from '../services/AppState';
-import { switchMap ,  map, share } from 'rxjs/operators';
+import { switchMap, map, share } from 'rxjs/operators';
 import { LocationService } from '../services/LocationService';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { interval, Observable } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-
+const secondsCounter = interval(1000);
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
@@ -20,22 +20,27 @@ export class CoursesComponent implements OnInit {
   direction: string;
   now = new Date();
   stops: any;
+  interval: any;
+  dateString = "";
+  timeString ="";
   firstStop: string = "Kraków"
   private clock: Observable<string>;
   constructor(private appState: AppState, private route: ActivatedRoute,
     private router: Router, public zone: NgZone, public locationService: LocationService) {
     this.allCourses = this.appState.allCourses;
     this.stops = this.locationService.stopsLatAndLng;
-    // this.clock = Observable.interval(1000).map(tick => new Date()).share();
   }
 
   ngOnInit() {
     console.log("courses");
-    this.showTime();
+    this.loadDateString()
+    this.interval = secondsCounter.subscribe(n => {
+      this.showTime();
+    });
     this.route.params.subscribe(params => {
       this.direction = params["direction"];
       this.zone.run(() => {
-        if (this.direction == "Krk"){
+        if (this.direction == "Krk") {
           this.firstStop = "Kraków";
           this.imgSrc = "../../assets/LimHerb.png"
         }
@@ -47,9 +52,14 @@ export class CoursesComponent implements OnInit {
       });
     });
   }
-setNow(){
-  this.now = new Date();
-}
+
+  loadDateString() {
+    var today = new Date();
+    this.dateString =today.toISOString().substring(0, 10);
+  }
+  setNow() {
+    this.now = new Date();
+  }
   getCourseForDirection() {
     this.limCourses = this.allCourses.Where(x => x.direction.startsWith(this.direction))
       .OrderBy(x => {
@@ -61,21 +71,19 @@ setNow(){
       .ToList();
   }
 
-  showTime(){
+
+
+  showTime() {
     var date = new Date();
-    var h:any = date.getHours(); // 0 - 23
-    var m:any = date.getMinutes(); // 0 - 59
-    var s:any = date.getSeconds(); // 0 - 59
-  
+    var h: any = date.getHours(); // 0 - 23
+    var m: any = date.getMinutes(); // 0 - 59
+    var s: any = date.getSeconds(); // 0 - 59
+
     h = (h < 10) ? "0" + h : h;
     m = (m < 10) ? "0" + m : m;
     s = (s < 10) ? "0" + s : s;
-    
+
     var time = h + ":" + m + ":" + s + " ";
-    document.getElementById("MyClockDisplay").innerText = time;
-    document.getElementById("MyClockDisplay").textContent = time;
-    
-    setTimeout(this.showTime, 1000);
-    
-}
+    this.timeString = time;
+  }
 }

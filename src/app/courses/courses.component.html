@@ -22,9 +22,9 @@
     <div id="MyClockDisplay" class="clock" style="height: 87px;width: 100%;font-size: 45px; margin-top: 105px; display: flex;
     justify-content: center;
     flex-direction: column;
-    text-align: center;">{{time}}
+    text-align: center;">{{timeString}}
     <br>
-    <span style="font-size: 16px;color:grey;">{{date}}</span>
+    <span style="font-size: 16px;color:grey;">{{dateString}}</span>
     </div>
     <app-course [allCourses]="limCourses" [firstStop]="firstStop" [date]="now"></app-course>
 
