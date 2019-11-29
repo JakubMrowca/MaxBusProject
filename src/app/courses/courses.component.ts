@@ -2,7 +2,6 @@ import { Component, OnInit, Input, NgZone } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { AppState } from '../services/AppState';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap ,  map, share } from 'rxjs/operators';
 import { LocationService } from '../services/LocationService';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';

@@ -15,7 +15,7 @@ import { AppState } from './services/AppState';
 import { NoInternet } from './events/NoInternet';
 import { AppVersionUpdated } from './events/AppVersionUpdated';
 import { EventService } from './services/EventServices';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProgressInfo } from './events/ProgressInfo';
 import {MatSidenav} from '@angular/material/sidenav';
 import { Message } from './models/Message';

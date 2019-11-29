@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { List } from 'linqts';
 import { Course } from '../models/Course';
 import { AppState } from '../services/AppState';
-import { MatTabChangeEvent, MatBottomSheet } from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { StopsSheets } from './components/stopsSheets.component';
 import { SingleCourseComponent } from '../single-course/single-course.component';
 

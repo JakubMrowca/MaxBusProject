@@ -11,7 +11,9 @@ import { CoursesFiltered } from '../events/CoursesFiltered';
 import { EventService } from '../services/EventServices';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { LocationChanged } from '../events/LocationChanged';
-import { MatSnackBar, MatDatepickerToggle, MatBottomSheet } from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SingleCourseComponent } from '../single-course/single-course.component';
 declare let navigator: any;
 @Component({

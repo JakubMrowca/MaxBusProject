@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { MatBottomSheetRef } from "@angular/material";
+import { MatBottomSheetRef } from "@angular/material/bottom-sheet";
 import { Course } from "../../models/Course";
-import {MAT_BOTTOM_SHEET_DATA} from '@angular/material';
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 import { AppState } from "../../services/AppState";
 import { LocationService } from "../../services/LocationService";
 import { BusLocationServices } from "../../services/BusLocationServices";

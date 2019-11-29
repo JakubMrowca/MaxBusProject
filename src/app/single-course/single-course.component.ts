@@ -1,8 +1,9 @@
 import { Component, OnInit, Inject, NgZone, OnDestroy } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA } from '@angular/material';
-import { MatBottomSheetRef } from "@angular/material";
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
+import { MatBottomSheetRef } from "@angular/material/bottom-sheet";
 import { Course } from '../models/Course';
-import { MatSnackBar, MatDatepickerToggle } from '@angular/material';
+import { MatDatepickerToggle } from '@angular/material/datepicker';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { TraficService } from '../services/TraficService';
 import { ProgressUpdated } from '../events/ProgressUpdated';
 import { EventService } from '../services/EventServices';
