@@ -1,5 +1,5 @@
 <div>
-        <mat-toolbar style="height:50px" color="primary">
+        <mat-toolbar style="height:50px;top:40px;position: fixed;z-index: 2000" color="primary">
                 <div class="subTolbar">
                   <mat-form-field style="width: 100px;
                   font-size: 14px;">
@@ -19,11 +19,12 @@
                   </i>Teraz</button>
                 </div>
               </mat-toolbar>
-    <div style="height: 87px;width: 100%;font-size: 20px; margin-top: 10px; display: flex;
+    <div id="MyClockDisplay" class="clock" style="height: 87px;width: 100%;font-size: 45px; margin-top: 105px; display: flex;
     justify-content: center;
     flex-direction: column;
-    text-align: center;">
-        <img src="{{imgSrc}}" class="herb">
+    text-align: center;">{{time}}
+    <br>
+    <span style="font-size: 16px;color:grey;">{{date}}</span>
     </div>
     <app-course [allCourses]="limCourses" [firstStop]="firstStop" [date]="now"></app-course>
 

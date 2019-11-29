@@ -19,3 +19,14 @@ div{
 .subTolbar i{
     margin-right: 5px;
 }
+@font-face{
+    font-family:'digital-clock-font';
+    src: url('../../assets/digital-7.ttf');
+   }
+.clock {
+    font-size: 60px;
+    font-family:'digital-clock-font'!important;
+    letter-spacing: 7px;
+    color: #e57373!important;
+
+}

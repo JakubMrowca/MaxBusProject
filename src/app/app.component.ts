@@ -58,7 +58,6 @@ export class AppComponent implements OnInit {
     this.sidenav.close();
   }
 ngOnInit(){
-  
 
 }
   activate(activeState){
