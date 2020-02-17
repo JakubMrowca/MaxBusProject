@@ -19,13 +19,16 @@
                   </i>Teraz</button>
                 </div>
               </mat-toolbar>
-    <div id="MyClockDisplay" class="clock" style="height: 87px;width: 100%;font-size: 45px; margin-top: 105px; display: flex;
+              <mat-card style="text-align: center; font-size: 20px; margin-top: 95px;margin-left: 4px;margin-right:4px;">
+                
+    <div id="MyClockDisplay" class="clock" style="height: 87px;width: 100%;font-size: 45px; display: flex;
     justify-content: center;
     flex-direction: column;
     text-align: center;">{{timeString}}
     <br>
     <span style="font-size: 16px;color:grey;">{{dateString}}</span>
     </div>
+  </mat-card>
     <app-course [allCourses]="limCourses" [firstStop]="firstStop" [date]="now"></app-course>
 
 </div>
