@@ -39,6 +39,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
+
+
+
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NotificationService } from './services/NotificationService';
@@ -77,7 +80,7 @@ const path: Routes = [
 ];
 @NgModule({
   declarations: [
-    AppComponent,
+    // AppComponent,
     CourseComponent,
     StartComponent,
     // watchedCourseComponent,
@@ -90,6 +93,7 @@ const path: Routes = [
     SingleCourseComponent
 
   ],
+  exports: [MatSidenavModule],
   imports: [
     RouterModule.forRoot(path),
     BrowserModule,

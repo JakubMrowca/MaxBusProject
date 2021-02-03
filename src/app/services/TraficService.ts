@@ -1,9 +1,10 @@
+/// <reference types="@types/googlemaps" />
 import { Injectable } from "@angular/core";
 import { Stop } from "../models/Stop";
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Observable } from "rxjs";
 import * as moment from "moment";
-import { } from 'googlemaps';
+// import {} from "googlemaps";
 import { Course } from "../models/Course";
 import { DirectionEnum } from "../helpers/DirectionEnum";
 import { EventService } from "./EventServices";
@@ -39,7 +40,7 @@ const stopNameInGoogle = {
 
 @Injectable()
 export class TraficService {
-
+/// <reference types="@types/googlemaps" />
     oldTimeTo;
     constructor(public http: HttpClient, public eventService: EventService) {
     }
